@@ -1,18 +1,19 @@
 // 
-// MainViewModel.swift
+// CommonWebViewModel.swift
 // 
 
 import Foundation
+import MKWebview
 
-struct MainViewModelInput {
+struct CommonWebViewModelInput {
+    var config: MKWebViewConfiguration?
+}
+
+struct CommonWebViewModelAction {
     
 }
 
-struct MainViewModelAction {
-    
-}
-
-class MainViewModel: BaseViewModel<MainViewModelInput, MainViewModelAction> {
+class CommonWebViewModel: BaseViewModel<CommonWebViewModelInput, CommonWebViewModelAction> {
  
     // MARK: - Private Properties
     
@@ -34,14 +35,14 @@ class MainViewModel: BaseViewModel<MainViewModelInput, MainViewModelAction> {
 }
 
 // MARK: - Event
-extension MainViewModel {
+extension CommonWebViewModel {
     private func setEvent() {
         
     }
 }
 
 // MARK: - Data
-extension MainViewModel {
+extension CommonWebViewModel {
     private func setData() {
         
     }

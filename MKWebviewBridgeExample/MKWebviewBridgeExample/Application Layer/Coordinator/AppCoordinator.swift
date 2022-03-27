@@ -4,6 +4,7 @@
 
 
 import UIKit
+import MKWebview
 
 class AppCoordinator: BaseCoordinator {
     
@@ -29,7 +30,8 @@ class AppCoordinator: BaseCoordinator {
 
 extension AppCoordinator {
     private func moveToRootViewController() {
-        let impl = MainCoordinatorImplementation()
-        self.coordinate(to: .main(impl))
+        
+        let impl = CommonWebViewCoordinatorImplementation()
+        self.coordinate(to: .webview(impl))
     }
 }
