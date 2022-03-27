@@ -21,7 +21,7 @@
 		4D3A3DF527F079DD0070EF4A /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF227F079DD0070EF4A /* BaseViewController.swift */; };
 		4D3A3DF627F079DD0070EF4A /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF327F079DD0070EF4A /* BaseViewModel.swift */; };
 		4D3A3DFE27F07F320070EF4A /* CommonWebViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF927F07F320070EF4A /* CommonWebViewModel.swift */; };
-		4D3A3DFF27F07F320070EF4A /* CommonViewWebCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DFB27F07F320070EF4A /* CommonViewWebCoordinator.swift */; };
+		4D3A3DFF27F07F320070EF4A /* CommonWebViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */; };
 		4D3A3E0027F07F320070EF4A /* CommonWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DFD27F07F320070EF4A /* CommonWebViewController.swift */; };
 		4D3A3E0227F080040070EF4A /* CustomWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0127F080040070EF4A /* CustomWebViewController.swift */; };
 		4D3A3E0527F0807B0070EF4A /* DeepLinkTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0427F0807B0070EF4A /* DeepLinkTypes.swift */; };
@@ -46,7 +46,7 @@
 		4D3A3DF227F079DD0070EF4A /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		4D3A3DF327F079DD0070EF4A /* BaseViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
 		4D3A3DF927F07F320070EF4A /* CommonWebViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewModel.swift; sourceTree = "<group>"; };
-		4D3A3DFB27F07F320070EF4A /* CommonViewWebCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonViewWebCoordinator.swift; sourceTree = "<group>"; };
+		4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewCoordinator.swift; sourceTree = "<group>"; };
 		4D3A3DFD27F07F320070EF4A /* CommonWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewController.swift; sourceTree = "<group>"; };
 		4D3A3E0127F080040070EF4A /* CustomWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWebViewController.swift; sourceTree = "<group>"; };
 		4D3A3E0427F0807B0070EF4A /* DeepLinkTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTypes.swift; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 		4D3A3DFA27F07F320070EF4A /* Coordinator */ = {
 			isa = PBXGroup;
 			children = (
-				4D3A3DFB27F07F320070EF4A /* CommonViewWebCoordinator.swift */,
+				4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -333,7 +333,7 @@
 				4D3A3DD927F078290070EF4A /* AppCoordinator.swift in Sources */,
 				4D3A3DF627F079DD0070EF4A /* BaseViewModel.swift in Sources */,
 				4D3A3DFE27F07F320070EF4A /* CommonWebViewModel.swift in Sources */,
-				4D3A3DFF27F07F320070EF4A /* CommonViewWebCoordinator.swift in Sources */,
+				4D3A3DFF27F07F320070EF4A /* CommonWebViewCoordinator.swift in Sources */,
 				4D3A3DDB27F078290070EF4A /* BaseCoordinator.swift in Sources */,
 				4D3A3DDA27F078290070EF4A /* Coordinator+FlowType.swift in Sources */,
 				4D3A3DBC27F077510070EF4A /* AppDelegate.swift in Sources */,
@@ -484,7 +484,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J74YZ2WGU6;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MKWebviewBridgeExample/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -512,7 +512,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J74YZ2WGU6;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MKWebviewBridgeExample/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -13,7 +13,7 @@ extension BaseCoordinator {
     func flow(to flow: FlowType) -> BaseCoordinator {
         switch flow {
             case let .webview(impl):
-                return CommonViewWebCoordinator(implementation: impl)
+                return CommonWebViewCoordinator(implementation: impl)
         }
     }
 }

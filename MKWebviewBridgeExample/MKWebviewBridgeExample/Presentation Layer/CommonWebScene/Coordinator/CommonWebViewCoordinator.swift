@@ -1,5 +1,5 @@
 // 
-// CommonViewWebCoordinator.swift
+// CommonWebViewCoordinator.swift
 // 
 
 import Foundation
@@ -10,7 +10,7 @@ struct CommonWebViewCoordinatorImplementation {
     var config: MKWebViewConfiguration?
 }
 
-class CommonViewWebCoordinator: BaseCoordinator {
+class CommonWebViewCoordinator: BaseCoordinator {
     private let implementation: CommonWebViewCoordinatorImplementation
     
     var inputs: CommonWebViewModelInput!
@@ -54,7 +54,7 @@ protocol CommonWebCoordinatorInjection {
     ) -> CommonWebViewController
 }
 
-extension CommonViewWebCoordinator: CommonWebCoordinatorInjection {
+extension CommonWebViewCoordinator: CommonWebCoordinatorInjection {
     func createViewController(
         input: CommonWebViewModelInput!,
         actions: CommonWebViewModelAction!
@@ -69,7 +69,7 @@ protocol CommonWebCoordinatorAction {
     // MARK: Make Actions
 }
 
-extension CommonViewWebCoordinator: CommonWebCoordinatorAction {
+extension CommonWebViewCoordinator: CommonWebCoordinatorAction {
     
 }
 
