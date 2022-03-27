@@ -7,7 +7,7 @@ import Foundation
 import UIKit
 import WebKit
 
-open class SFWebView: WKWebView {
+open class MKWebView: WKWebView {
     public var urlRequest: URLRequest? = nil
     
     public var allheaderFields: [String: String]? {
