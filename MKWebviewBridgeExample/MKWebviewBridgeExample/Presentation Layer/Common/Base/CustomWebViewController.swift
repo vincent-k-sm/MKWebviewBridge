@@ -31,7 +31,7 @@ class WrappedCustomWebViewController<U>: MKWebViewController, BaseViewController
     }
     
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
 }
 
@@ -56,7 +56,7 @@ class CustomWebviewController<U>: WrappedCustomWebViewController<U> {
     }
     
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
     
     

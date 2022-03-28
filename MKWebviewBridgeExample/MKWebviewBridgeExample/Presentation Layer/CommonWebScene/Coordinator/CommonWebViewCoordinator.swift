@@ -22,7 +22,7 @@ class CommonWebViewCoordinator: BaseCoordinator {
     }
     
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
 
     override func setInput() {

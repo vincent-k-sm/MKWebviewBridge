@@ -52,6 +52,6 @@ class BaseViewModel<U, A>: NSObject, BaseViewModelProtocol {
     }
     
     deinit {
-        print("\(self) - deinit")
+        print("\(Self.self) -- deinit")
     }
 }

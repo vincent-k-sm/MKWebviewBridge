@@ -73,6 +73,7 @@ extension SceneDelegate {
 extension SceneDelegate {
     private func initLibrary() {
         MKWebview.debugEnabled = true
+        MKWebview.shared.clearCookies(completion: nil)
     }
 }
 

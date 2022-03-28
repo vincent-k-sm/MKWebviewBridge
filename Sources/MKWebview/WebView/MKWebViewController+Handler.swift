@@ -34,9 +34,10 @@ extension MKWebViewController {
      
      --- override func onAddPostMessage() ---
      if #available(iOS 14.0, *) {
-         addPostMessageReplyHandler("testWithPromise", handler: tResult, result: { result in
-             print("Called")
-         })
+        let promiseResult: ReplyHandler = ("Return Data", nil)
+        addPostMessageReplyHandler("testWithPromise", handler: promiseResult, result: { result in
+            print("Called")
+        })
      }
      */
     public func addPostMessageReplyHandler(_ key: String, handler: ReplyHandler, result: @escaping ((Any?) -> Void)) {

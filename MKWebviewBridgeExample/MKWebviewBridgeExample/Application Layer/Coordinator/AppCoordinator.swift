@@ -19,7 +19,7 @@ class AppCoordinator: BaseCoordinator {
     }
    
     deinit {
-        print("\(self) - deinit")
+        print("\(Self.self) -- deinit")
     }
     
     override func start() {

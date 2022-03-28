@@ -30,7 +30,7 @@ class CommonWebViewModel: BaseViewModel<CommonWebViewModelInput, CommonWebViewMo
     }
     
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
 }
 

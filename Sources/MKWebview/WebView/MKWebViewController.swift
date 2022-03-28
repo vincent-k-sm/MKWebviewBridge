@@ -71,7 +71,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return nil
     }
     
-    /// For Static URL Load
+    /// For Static Local File Load
     /// - Parameters :
     /// - Usecase
     /*
@@ -90,12 +90,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     /*
      override func onAddUserScript() -> String? {
          return """
-             Mobile = {
+            CustomScripts = {
                  showToast(s) {
                      window.webkit.messageHandlers.showToast.postMessage(s);
                  },
             }
         """
+     /// It can Called `window.CustomScripts.showToast('msg';)` in JavaScript
      ----
      override func onAddPostMessage() {
          addPostMessageHandler("showToast") { (res) in
@@ -108,6 +109,38 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
      */
     open func onAddUserScript() -> String? {
         return nil
+    }
+    
+    /// For Handle Scripts
+    /// - Parameters :
+    /// - Usecase
+    open func onAddPostMessage() {
+        //
+    }
+    
+    open func addPostMessageHandler(_ key: String, result: @escaping ((Any?) -> Void)) {
+        _callbacks[key] = result
+        contentController.add(LeakAvoider(delegate: self, delegateReply: self), name: key)
+    }
+    
+    
+    public func reloadWebview() {
+        let configuration = WebkitManager.shared.configuration
+        configuration.userContentController.removeAllUserScripts()
+        
+        if let userScript = onAddUserScript() {
+            SystemUtils.shared.print(userScript, self)
+            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            contentController.addUserScript(s)
+
+        }
+        
+        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+            guard let self = self else { return }
+            guard let url = self.checkUrlString() else { return }
+            self.webView.load(url: url, header: self.headers())
+
+        })
     }
     
     public var defaultSchemes = ["tel", "mailto", "sms", "facetime"]
@@ -226,35 +259,6 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
 //        self._callbacks.keys.forEach {
 //            ucc.removeScriptMessageHandler(forName: $0)
 //        }
-    }
-    
-    open func onAddPostMessage() {
-        //
-    }
-    
-    open func addPostMessageHandler(_ key: String, result: @escaping ((Any?) -> Void)) {
-        _callbacks[key] = result
-        contentController.add(LeakAvoider(delegate: self, delegateReply: self), name: key)
-    }
-    
-    
-    public func reloadWebview() {
-        let configuration = WebkitManager.shared.configuration
-        configuration.userContentController.removeAllUserScripts()
-        
-        if let userScript = onAddUserScript() {
-            SystemUtils.shared.print(userScript, self)
-            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            contentController.addUserScript(s)
-
-        }
-        
-        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
-            guard let self = self else { return }
-            guard let url = self.checkUrlString() else { return }
-            self.webView.load(url: url, header: self.headers())
-            
-        })
     }
 }
 
