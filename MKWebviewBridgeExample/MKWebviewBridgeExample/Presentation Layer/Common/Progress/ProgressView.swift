@@ -20,7 +20,7 @@ class ProgressView {
     private init() { }
     
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
     
     func show(isBackground: Bool = false) {

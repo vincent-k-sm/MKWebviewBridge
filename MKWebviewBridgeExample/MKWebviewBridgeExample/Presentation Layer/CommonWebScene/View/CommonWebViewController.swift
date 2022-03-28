@@ -28,11 +28,11 @@ class CommonWebViewController: CustomWebviewController<CommonWebViewModel> {
     override func cookies() -> [HTTPCookie] {
         var cookies: [HTTPCookie] = []
         
-        if let uuidCookie = HTTPCookie(properties: [.domain: "https://smbh.kr",
+        if let uuidCookie = HTTPCookie(properties: [.domain: "smbh.kr",
                                                     .path: "/",
                                                     .name: "CID",
                                                     .value: "\(UUID().uuidString)",
-                                                    .secure: "TRUE"]) {
+                                                    .secure: false]) {
             cookies.append(uuidCookie)
         }
         
@@ -49,14 +49,49 @@ class CommonWebViewController: CustomWebviewController<CommonWebViewModel> {
 
     }
     
+    
+    override func onAddUserScript() -> String? {
+        return """
+            CustomScripts = {
+                 showToast(s) {
+                     window.webkit.messageHandlers.showToast.postMessage(s);
+                 },
+            }
+        """
+    }
+    
     override func onAddPostMessage() {
         super.onAddPostMessage()
-
+        let promiseResult: ReplyHandler = ("\(UUID().uuidString)", nil)
+        if #available(iOS 14.0, *) {
+            addPostMessageReplyHandler("testWithPromise", handler: promiseResult, result: { result in
+                print("Called")
+            })
+        }
+        
+        addPostMessageHandler("showToast") { (res) in
+            
+            if let res = res as? String {
+                MKToast.makeToast(text: res)
+            }
+        }
+        
+        addPostMessageHandler("getToken") { (res) in
+            let value: [String: Any] = ["token": UUID().uuidString]
+            self.callJavaScript(script: "setToken", value: value)
+        }
+        
+        addPostMessageHandler("logEvent") { (res) in
+            
+            if let res = res as? String {
+                MKToast.makeToast(text: res)
+            }
+        }
     }
     
 
     deinit {
-        print("\(self) -- deinit")
+        print("\(Self.self) -- deinit")
     }
     
     

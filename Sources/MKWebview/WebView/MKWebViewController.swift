@@ -22,7 +22,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     /*
      override func cookies() -> [HTTPCookie] {
          var cookies: [HTTPCookie] = []
-         if let uuidCookie = HTTPCookie(properties: [.domain: "https://smbh.kr",
+         if let uuidCookie = HTTPCookie(properties: [.domain: "smbh.kr",
                                                      .path: "/",
                                                      .name: "CID",
                                                      .value: "\(UUID().uuidString)",

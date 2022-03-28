@@ -29,6 +29,7 @@
 		4D3A3E0B27F0813D0070EF4A /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0A27F0813D0070EF4A /* ProgressView.swift */; };
 		4D3A3E0F27F0823E0070EF4A /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */; };
 		4D3A3E1227F082780070EF4A /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1127F082780070EF4A /* UIAlertController+.swift */; };
+		4D3A3E1527F133FC0070EF4A /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1427F133FC0070EF4A /* Toast.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		4D3A3E0A27F0813D0070EF4A /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
 		4D3A3E1127F082780070EF4A /* UIAlertController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+.swift"; sourceTree = "<group>"; };
+		4D3A3E1427F133FC0070EF4A /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		4D3A3DE127F0790B0070EF4A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				4D3A3E1327F133F30070EF4A /* Toast */,
 				4D3A3E0927F081300070EF4A /* Progress */,
 				4D3A3DF127F079DD0070EF4A /* Base */,
 				4D3A3DEF27F079DD0070EF4A /* Cells */,
@@ -249,6 +252,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		4D3A3E1327F133F30070EF4A /* Toast */ = {
+			isa = PBXGroup;
+			children = (
+				4D3A3E1427F133FC0070EF4A /* Toast.swift */,
+			);
+			path = Toast;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -332,6 +343,7 @@
 			files = (
 				4D3A3DD927F078290070EF4A /* AppCoordinator.swift in Sources */,
 				4D3A3DF627F079DD0070EF4A /* BaseViewModel.swift in Sources */,
+				4D3A3E1527F133FC0070EF4A /* Toast.swift in Sources */,
 				4D3A3DFE27F07F320070EF4A /* CommonWebViewModel.swift in Sources */,
 				4D3A3DFF27F07F320070EF4A /* CommonWebViewCoordinator.swift in Sources */,
 				4D3A3DDB27F078290070EF4A /* BaseCoordinator.swift in Sources */,
