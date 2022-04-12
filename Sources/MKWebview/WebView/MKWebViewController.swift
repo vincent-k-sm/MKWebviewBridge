@@ -300,17 +300,19 @@ extension MKWebViewController {
             guard let url = URL(string: urlString) else { return nil }
             result = url
         }
-        else if let url = URL(string: self.urlString) {
+        if let url = URL(string: self.urlString) {
             result = url
         }
-        else if let url = self.loadLocalFile() {
+        if let url = self.loadLocalFile() {
             result = url
         }
-        else if let urlString = self.configuration?.urlString {
+        
+        if let urlString = self.configuration?.urlString {
             guard let string = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }
             guard let url = URL(string: string) else { return nil }
             result = url
         }
+        
         return result
     }
     
