@@ -30,6 +30,7 @@
 		4D3A3E0F27F0823E0070EF4A /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */; };
 		4D3A3E1227F082780070EF4A /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1127F082780070EF4A /* UIAlertController+.swift */; };
 		4D3A3E1527F133FC0070EF4A /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1427F133FC0070EF4A /* Toast.swift */; };
+		4D3AFF1428A4AC7200A99CA2 /* sampleScheme.html in Resources */ = {isa = PBXBuildFile; fileRef = 4D3AFF1328A4AC7200A99CA2 /* sampleScheme.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
 		4D3A3E1127F082780070EF4A /* UIAlertController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+.swift"; sourceTree = "<group>"; };
 		4D3A3E1427F133FC0070EF4A /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		4D3AFF1328A4AC7200A99CA2 /* sampleScheme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = sampleScheme.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 		4D3A3DDF27F078E30070EF4A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4D3AFF1328A4AC7200A99CA2 /* sampleScheme.html */,
 				4D3A3DC927F077520070EF4A /* Info.plist */,
 				4D3A3DC427F077520070EF4A /* Assets.xcassets */,
 				4D3A3DC627F077520070EF4A /* LaunchScreen.storyboard */,
@@ -330,6 +333,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D3A3DC827F077520070EF4A /* LaunchScreen.storyboard in Resources */,
+				4D3AFF1428A4AC7200A99CA2 /* sampleScheme.html in Resources */,
 				4D3A3DC527F077520070EF4A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,7 +500,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2E7Y3PH5LW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MKWebviewBridgeExample/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -524,7 +528,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2E7Y3PH5LW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MKWebviewBridgeExample/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

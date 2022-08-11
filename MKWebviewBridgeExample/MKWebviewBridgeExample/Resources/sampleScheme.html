@@ -1,0 +1,365 @@
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width"/>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<script>
+    let resultSchemeURL = "";
+
+    // Promise를 사용해서 데이터를 가져갈 때 사용 가능
+    // iOS 14 이상에서만 사용가능
+    function handleInfoFromApp(fromApp) {
+        document.getElementById("passDataResult").innerHTML = `Promise button taaped: ${fromApp}`;
+    }
+
+    function handleError(err) {
+    }
+
+    function sampleMethodTheHTMLCanCall(inputInfo, successFunc, errorFunc) {
+        var promise = window.webkit.messageHandlers.testWithPromise.postMessage(inputInfo);
+        promise.then(
+            function (result) {
+                console.log(result); // "Stuff worked!"
+                successFunc(result)
+            },
+            function (err) {
+                console.log(err); // Error: "It broke"
+                errorFunc(err)
+            });
+    }
+
+    // 프론트 -> 앱 : 기본 Alert
+    function testAlert() {
+        alert('Test Alert');
+    }
+
+    // 프론트 -> 앱 : 데이터 전달
+    function logEvent() {
+        try {
+            var msg = {
+                screen_name: 'Test Screen',
+                value: 'Firebase'
+            };
+            webkit.messageHandlers.logEvent.postMessage(JSON.stringify(msg));
+        } catch (error) {
+            alert(error)
+        }
+
+    }
+
+    // 프론트가 앱에서 데이터를 가져가고자 할 때 Trigger 함수
+    // 받고 넣는 총 2개의 함수를 사용하는 케이스
+    // Get
+    function getToken() {
+        webkit.messageHandlers.getToken.postMessage('');
+    }
+
+    // Return
+    function setToken(token) {
+        document.getElementById("passDataResult").innerHTML = `${token}`;
+        return "success"
+    }
+
+    function viewWillDisappear() {
+        webkit.messageHandlers.closeWebview.postMessage('');
+    }
+    function showResultScheme() {
+        initResultScheme()
+        $('html, body').animate({
+            scrollTop: $('#result').offset().top
+        });
+    }
+
+    function initResultScheme() {
+        let scheme = document.getElementById("appScheme").value;
+        const host = document.getElementById("host").value;
+        const url = document.getElementById("urlString").value;
+        scheme += `${host}url=${url}`
+
+        const title = document.getElementById("title").value;
+        if (title !== "") {
+            scheme += `&title=${title}`
+        }
+
+        const leftBtn = document.getElementById("leftbtn").value;;
+        if (leftBtn !== "") {
+            scheme += `&leftBtn=${leftBtn}`
+        }
+
+        const rightBtn = document.getElementById("rightbtn").value;;
+        if (rightBtn !== "") {
+            scheme += `&rightBtn=${rightBtn}`
+        }
+
+        const navigationColor = document.getElementById("navigationColor").value;
+        if (navigationColor !== "") {
+            scheme += `&navigationColor=${navigationColor.replaceAll("#", "")}`
+        }
+
+        const tintColor = document.getElementById("tintColor").value;
+        if (tintColor !== "") {
+            scheme += `&tintColor=${tintColor.replaceAll("#", "")}`
+        }
+
+        const statusBarColor = document.getElementById("statusBarColor").value;
+        if (statusBarColor !== "") {
+            scheme += `&statusBarColor=${statusBarColor.replaceAll("#", "")}`
+        }
+
+        const removeStack = document.getElementById("stack").value;
+        if (removeStack !== "") {
+            scheme += `&removeStack=${removeStack}`
+        }
+
+        this.resultSchemeURL = scheme
+        const splitSchemeUrl = scheme.replaceAll("&", "<br>&");
+        document.getElementById("result").innerHTML = splitSchemeUrl
+    }
+
+    // App Scheme 호출
+    function movePage() {
+        initResultScheme();
+        window.location = this.resultSchemeURL
+    }
+
+    // For Test
+    function reset() {
+        document.getElementById("passDataResult").innerHTML = ""
+    }
+
+    function reloadWebview() {
+        this.resultSchemeURL = "mkwebview://reload-webview";
+        window.location = this.resultSchemeURL
+    }
+
+    function closeWebview() {
+        this.resultSchemeURL = "mkwebview://close-webview";
+        window.location = this.resultSchemeURL
+    }
+
+    function testToast() {
+        window.CustomScripts.showToast('test Toast');
+    }
+
+    function getCookie() {
+        const cookies = document.cookie.split(';');
+        let ret = '';
+        for(var i = 1; i <= cookies.length; i++) {
+            ret += i + ' : ' + cookies[i - 1] + "<br>";
+        }
+
+        console.log(cookies)
+        document.getElementById("passDataResult").innerHTML =  ret;
+    }
+
+    window.onload = function () {
+        initResultScheme();
+        getConfig();
+
+    };
+
+</script>
+<style>
+
+</style>
+<body>
+    <div>
+        <div data-role="header" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+
+                    <li>
+                        <h4 style="text-align:center; padding-top: 0px;">Webview Bridge Test</h4>
+                        <div class="button-wrap">
+
+                            <button class="ui-shadow ui-btn ui-corner-all" onclick="reloadWebview();">Reload Webview</button>
+                        </div>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+
+        <div data-role="tabs" id="tabs">
+            <div data-role="navbar" class="ui-body-d ui-content">
+                <ul>
+                    <li>
+                        <a id="tab-scheme" href="#scheme" data-ajax="false" class="ui-btn-active">Scheme</a>
+                    </li>
+                    <li>
+                        <a id="tab-data" href="#data" data-ajax="false">Interface</a>
+                    </li>
+                </ul>
+            </div>
+            <!--        Data 관련-->
+            <div id="data">
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Passed Result</h3>
+                    <h4 id="passDataResult"></h4>
+                    <h4 id="text"></h4>
+                    <h4 id="header"></h4>
+                    <h4 id="user"></h4>
+                    <button onclick="sampleMethodTheHTMLCanCall( 'inputInfo', handleInfoFromApp, handleError )">@available(iOS 14.0,
+                        *)<br>Call Promise
+                    </button>
+                    <button onclick="getToken()">Get Token & trigger Set Token</button>
+                    <button onclick="getCookie()">Get Cookies</button>
+                </div>
+
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>postMessage interface</h3>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="testToast();">Test Toast</button>
+                            </div>
+                        </div>
+                        <div class="ui-block-b">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="testAlert();">Test Alert</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-grid-solo">
+                        <div class="button-wrap">
+                            <button class="ui-shadow ui-btn ui-corner-all" onclick="logEvent();">Test LogEvent</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Reset Passed Data</h3>
+
+                    <div class="ui-grid-solo">
+                        <div class="button-wrap">
+                            <button class="ui-shadow ui-btn ui-corner-all" onclick="reset();">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--        Scheme 관련 -->
+            <div id="scheme">
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Scheme Event</h3>
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="reloadWebview();">Reload Webview</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="document.location.href='tel://010-1234-5678'">tel://010-1234-5678</button>
+                            </div>
+                        </div>
+                        <div class="ui-block-b">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="closeWebview();">Close Webview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Configuration</h3>
+                    <form>
+                        <label for="appScheme">set App scheme domain eg.mkwebview://</label>
+                        <input type="text" data-clear-btn="true" id="appScheme" value="mkwebview://" onchange="initResultScheme();"/>
+
+                        <label for="host">Host Cannot edit</label>
+                        <input type="url" data-clear-btn="true" id="host" value="webview?" disabled="disabled" onchange="initResultScheme();"/>
+
+                        <label for="urlString">set url eg. https://</label>
+                        <input type="url" data-clear-btn="true" id="urlString" value="https://smbh.kr/mk_bridge/sample" onchange="initResultScheme();"/>
+
+                        <label for="title">set title for navigation bar</label>
+                        <input type="text" data-clear-btn="true" id="title" value="테스트" onchange="initResultScheme();"/>
+
+                        <label for="navigationColor">set color for navigation bar</label>
+                        <input type="color" data-clear-btn="true" id="navigationColor" value="#FFFFFF" onchange="initResultScheme();"/>
+
+                        <label for="statusBarColor">set color for status bar</label>
+                        <input type="color" data-clear-btn="true" id="statusBarColor" value="#FFFFFF" onchange="initResultScheme();"/>
+
+                        <label for="tintColor">set color for navigation bar tint color</label>
+                        <input type="color" data-clear-btn="true" id="tintColor" value="#000000" onchange="initResultScheme();"/>
+
+                    </form>
+
+                    <h3>Button Activate</h3>
+                    <form>
+                        <div class="ui-field-contain">
+                            <label for="leftbtn">Left Button</label>
+                            <select name="leftbtn" id="leftbtn" data-native-menu="true" onchange="initResultScheme();">
+                                <option value="">deactivate</option>
+                                <option value="true">activate</option>
+                            </select>
+                        </div>
+                        <div class="ui-field-contain">
+                            <label for="rightbtn">Right Button</label>
+                            <select name="rightbtn" id="rightbtn" data-native-menu="true" onchange="initResultScheme();">
+                                <option value="">deactivate</option>
+                                <option value="true">activate</option>
+                            </select>
+                        </div>
+                    </form>
+                    <h3>Remove Current Stack</h3>
+                    <p>It will remove all stack(even native) in navigation controller and push webview</p>
+                    <form>
+                        <div class="ui-field-contain">
+                            <label for="stack">RemoveStack</label>
+                            <select name="stack" id="stack" data-native-menu="true" onchange="initResultScheme();">
+                                <option value="">deactivate</option>
+                                <option value="true">activate</option>
+                            </select>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Result Scheme</h3>
+                    <div class="ui-grid-solo">
+                        <div class="button-wrap">
+                            <button class="ui-shadow ui-btn ui-corner-all" onclick="showResultScheme();">Show Result Scheme</button>
+                        </div>
+                    </div>
+                    <h4 type="text" id="result">scheme:</h4>
+
+                    <div class="ui-grid-solo">
+                        <div class="button-wrap">
+                            <button class="ui-shadow ui-btn ui-corner-all" onclick="movePage();">Action Deep Link</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+                    <h5 style="text-align:center;">Scheme Action</h5>
+                    <div data-role="navbar">
+                        <ul>
+                            <li>
+                                <div class="button-wrap">
+                                    <button class="ui-shadow ui-btn ui-corner-all" onclick="showResultScheme();">Show Result Scheme</button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="button-wrap">
+                                    <button class="ui-shadow ui-btn ui-corner-all" onclick="movePage();">Action Deep Link</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- /footer -->
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
