@@ -227,7 +227,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return v
     }()
     
-    convenience init(config: MKWebViewConfiguration) {
+    public convenience init(config: MKWebViewConfiguration) {
         self.init()
         self.configuration = config
     }
