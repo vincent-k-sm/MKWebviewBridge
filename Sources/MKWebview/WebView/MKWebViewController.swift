@@ -134,15 +134,11 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
             contentController.addUserScript(s)
 
         }
-        
-        DispatchQueue.main.async {
-            self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
-                guard let self = self else { return }
-                guard let url = self.checkUrlString() else { return }
-                self.webView.load(url: url, header: self.headers())
-            })
-        }
-        
+        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+            guard let self = self else { return }
+            guard let url = self.checkUrlString() else { return }
+            self.webView.load(url: url, header: self.headers())
+        })
     }
     
     public var defaultSchemes = ["tel", "mailto", "sms", "facetime"]
@@ -205,8 +201,8 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     }()
     
     open var configuration: MKWebViewConfiguration? = nil {
-        willSet {
-            self.updateNavigationBar(config: newValue)
+        didSet {
+            self.updateNavigationBar(config: configuration)
         }
     }
     
@@ -243,13 +239,10 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-        DispatchQueue.main.async {
-            self.setupNavigationBar()
-            self.setupStatusbar()
-            self.setupWebView()
-        }
-        
-        
+        self.setupNavigationBar()
+        self.setupStatusbar()
+        self.setupWebView()
+    
     }
     
     open override func viewWillAppear(_ animated: Bool) {
