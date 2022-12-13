@@ -35,10 +35,7 @@ open class MKWebView: WKWebView {
                 WebkitManager.shared.headers.forEach{ request.setValue($0.value, forHTTPHeaderField: $0.key) }
                 self.urlRequest = request
                 self.load(request)
-                
                 SystemUtils.shared.print("start Load", self)
-                
-                self.load(request)
             })
         }
         
