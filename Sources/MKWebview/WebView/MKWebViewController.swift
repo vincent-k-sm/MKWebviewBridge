@@ -241,9 +241,12 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupNavigationBar()
-        self.setupStatusbar()
-        self.setupWebView()
+        DispatchQueue.main.async {
+            self.setupNavigationBar()
+            self.setupStatusbar()
+            self.setupWebView()
+        }
+        
         
     }
     

@@ -22,10 +22,10 @@ class CommonWebViewController: CustomWebviewController<CommonWebViewModel> {
         return "https://www.smbh.kr/mk_bridge/sample2.html"
     }
     
-//    override func loadLocalFile() -> URL? {
-//        guard let url = Bundle.main.url(forResource: "sampleScheme", withExtension: "html") else { return nil }
-//        return url
-//    }
+    override func loadLocalFile() -> URL? {
+        guard let url = Bundle.main.url(forResource: "sampleScheme", withExtension: "html") else { return nil }
+        return url
+    }
     
     override func headers() -> [String: String] {
         return self.headerInfos
