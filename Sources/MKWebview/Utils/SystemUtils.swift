@@ -5,11 +5,11 @@
 
 import Foundation
 
-class SystemUtils {
-    static let shared = SystemUtils()
+public class SystemUtils {
+    public static let shared = SystemUtils()
     
     /// Toggles debug print() statements
-    var debugEnabled = false
+    public var debugEnabled = false
     
     init() { }
 }
