@@ -145,7 +145,14 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     
     public var defaultSchemes = ["tel", "mailto", "sms", "facetime"]
     
-    private(set) var urlString: String = ""
+    private(set) var urlString: String = "" {
+        didSet {
+            if let urlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                guard let url = URL(string: urlString) else { return }
+                self.webView.load(url: url, header: self.headers())
+            }
+        }
+    }
     
     // MARK: - Local Properties
     lazy var statusBarView: UIView = {
