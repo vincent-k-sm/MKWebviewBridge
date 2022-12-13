@@ -135,12 +135,14 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
 
         }
         
-        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
-            guard let self = self else { return }
-            guard let url = self.checkUrlString() else { return }
-            self.webView.load(url: url, header: self.headers())
-
-        })
+        DispatchQueue.main.async {
+            self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+                guard let self = self else { return }
+                guard let url = self.checkUrlString() else { return }
+                self.webView.load(url: url, header: self.headers())
+            })
+        }
+        
     }
     
     public var defaultSchemes = ["tel", "mailto", "sms", "facetime"]
