@@ -26,19 +26,22 @@ open class MKWebView: WKWebView {
     
     
     open func load(url: URL, header: [String: String]) {
-        WebkitManager.shared.setHeaders(headers: header, completion: { finish in
-            SystemUtils.shared.print(finish.description, self)
-            
-            var request = URLRequest(url: url)
-            header.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
-            WebkitManager.shared.headers.forEach{ request.setValue($0.value, forHTTPHeaderField: $0.key) }
-            self.urlRequest = request
-            self.load(request)
-            
-            SystemUtils.shared.print("start Load", self)
-            
-            self.load(request)
-        })
+        DispatchQueue.main.async {
+            WebkitManager.shared.setHeaders(headers: header, completion: { finish in
+                SystemUtils.shared.print(finish.description, self)
+                
+                var request = URLRequest(url: url)
+                header.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
+                WebkitManager.shared.headers.forEach{ request.setValue($0.value, forHTTPHeaderField: $0.key) }
+                self.urlRequest = request
+                self.load(request)
+                
+                SystemUtils.shared.print("start Load", self)
+                
+                self.load(request)
+            })
+        }
+        
     }
     
 
