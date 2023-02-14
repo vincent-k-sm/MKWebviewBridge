@@ -2,8 +2,8 @@
 //  JavascriptFunctions.swift
 //
         
-import MKWebview
 import Foundation
+import MKWebview
 
 // MARK: - Outbound
 enum JavaScripts: String, CaseIterable, ScriptInterface {

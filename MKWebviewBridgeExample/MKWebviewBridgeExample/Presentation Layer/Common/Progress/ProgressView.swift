@@ -2,11 +2,11 @@
 //  ProgressView.swift
 //
 
-
 import Foundation
+import MKFoundation
+import MKUtils
 import NVActivityIndicatorView
 import SnapKit
-import MKFoundation
 import UIKit
 
 class ProgressView {
@@ -20,7 +20,7 @@ class ProgressView {
     private init() { }
     
     deinit {
-        print("\(Self.self) -- deinit")
+        Debug.print("")
     }
     
     func show(isBackground: Bool = false) {
