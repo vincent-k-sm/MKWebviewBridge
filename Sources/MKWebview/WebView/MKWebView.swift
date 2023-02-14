@@ -1,11 +1,11 @@
 //
 //  MKWebView.swift
 //
-
-
-import Foundation
+        
 import UIKit
 import WebKit
+
+public typealias EvaluateScriptResult = ((Result<Any?, Error>) -> Void)?
 
 open class MKWebView: WKWebView {
     public var urlRequest: URLRequest? = nil
@@ -26,35 +26,91 @@ open class MKWebView: WKWebView {
     
     
     open func load(url: URL, header: [String: String]) {
-        DispatchQueue.main.async {
-            WebkitManager.shared.setHeaders(headers: header, completion: { finish in
-                SystemUtils.shared.print(finish.description, self)
-                
-                var request = URLRequest(url: url)
-                header.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
-                WebkitManager.shared.headers.forEach{ request.setValue($0.value, forHTTPHeaderField: $0.key) }
-                self.urlRequest = request
+        self.setupUserAgent()
+        
+        WebkitManager.shared.setHeaders(headers: header, completion: { finish in
+            MKWebKit.print("Webview SetHeaders: \(finish.description)")
+            
+            var request = URLRequest(url: url)
+//            header.forEach {
+//                request.setValue($0.value, forHTTPHeaderField: $0.key)
+//            }
+            
+            WebkitManager.shared.headers.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
+            
+            self.urlRequest = request
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.load(request)
-                SystemUtils.shared.print("start Load", self)
-            })
-        }
+            }
+            
+            MKWebKit.print("Start Load Webview")
+   
+        })
         
     }
     
+    private func setupUserAgent() {
+        self.evaluateJavascript(Constants.userAgentKey, result: { result in
+            var agent = ""
+            switch result {
+                case let .success(data):
+                    agent = String(describing: data)
 
-    public func setCookies(cookies: [HTTPCookie] = [], completion: @escaping (WKWebViewConfiguration) -> Void) {
-        WebkitManager.shared.setCookies(cookies: cookies, completion: { [weak self] config in
-            guard self != nil else { return }
+                case let .failure(error):
+                    MKWebKit.print("empty customUserAgent", error.localizedDescription)
+            }
+            
+            agent += " NATIVE_iOS"
+            self.customUserAgent = agent
+        })
+    }
+    public func setCookies(
+        cookies: [HTTPCookie] = [],
+        completion: @escaping (WKWebViewConfiguration) -> Void
+    ) {
+        WebkitManager.shared.setCookies(cookies: cookies, completion: { config in
             completion(config)
         })
     }
     
-    public func getCookies(for domain: String? = nil, completion: @escaping ([String : Any])->())  {
-        WebkitManager.shared.getCookies(for: domain, completion: { [weak self] (result) in
-            guard self != nil else { return }
+    public func getCookies(
+        for domain: String? = nil,
+        completion: @escaping ([String : Any])->()
+    ) {
+        WebkitManager.shared.getCookies(for: domain, completion: { (result) in
             completion(result)
         })
+    }
+    
+    public func evaluateJavascript(
+        _ function: String,
+        result: EvaluateScriptResult
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.evaluateJavaScript("\(function)") { (ret, error) in
+                if let error = error {
+                    MKWebKit.print(error)
+                    result?(.failure(error))
+                    return
+                }
+                
+                if let ret = ret {
+                    MKWebKit.print("\(ret)")
+                    result?(.success(ret))
+                }
+            }
+        }
+        
     }
 
 }
 
+extension MKWebView {
+    struct Constants {
+        static let userAgentKey = "navigator.userAgent"
+    }
+}

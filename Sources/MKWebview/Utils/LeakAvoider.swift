@@ -1,7 +1,7 @@
 //
 //  LeakAvoider.swift
 //
-
+        
 
 import Foundation
 import WebKit
@@ -10,14 +10,14 @@ class LeakAvoider: NSObject, WKScriptMessageHandler, WKScriptMessageHandlerWithR
     weak var delegate: WKScriptMessageHandler?
     weak var delegateReply: WKScriptMessageHandlerWithReply?
     
-    init(delegate: WKScriptMessageHandler, delegateReply: WKScriptMessageHandlerWithReply) {
+    init(delegate: WKScriptMessageHandler?, delegateReply: WKScriptMessageHandlerWithReply?) {
         self.delegate = delegate
         self.delegateReply = delegateReply
         super.init()
     }
     
     deinit {
-        SystemUtils.shared.print("", self)
+        MKWebKit.print("")
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {

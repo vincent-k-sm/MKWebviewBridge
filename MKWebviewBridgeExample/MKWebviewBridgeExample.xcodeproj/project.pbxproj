@@ -12,25 +12,14 @@
 		4D3A3DC527F077520070EF4A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D3A3DC427F077520070EF4A /* Assets.xcassets */; };
 		4D3A3DC827F077520070EF4A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D3A3DC627F077520070EF4A /* LaunchScreen.storyboard */; };
 		4D3A3DD327F077830070EF4A /* MKWebview in Frameworks */ = {isa = PBXBuildFile; productRef = 4D3A3DD227F077830070EF4A /* MKWebview */; };
-		4D3A3DD927F078290070EF4A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DD627F078290070EF4A /* AppCoordinator.swift */; };
-		4D3A3DDA27F078290070EF4A /* Coordinator+FlowType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DD727F078290070EF4A /* Coordinator+FlowType.swift */; };
-		4D3A3DDB27F078290070EF4A /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DD827F078290070EF4A /* BaseCoordinator.swift */; };
 		4D3A3DDE27F078870070EF4A /* MKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 4D3A3DDD27F078870070EF4A /* MKFoundation */; };
 		4D3A3DE427F0792D0070EF4A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D3A3DE327F0792D0070EF4A /* SnapKit */; };
-		4D3A3DF427F079DD0070EF4A /* CommonListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF027F079DD0070EF4A /* CommonListHeaderView.swift */; };
-		4D3A3DF527F079DD0070EF4A /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF227F079DD0070EF4A /* BaseViewController.swift */; };
-		4D3A3DF627F079DD0070EF4A /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF327F079DD0070EF4A /* BaseViewModel.swift */; };
-		4D3A3DFE27F07F320070EF4A /* CommonWebViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DF927F07F320070EF4A /* CommonWebViewModel.swift */; };
-		4D3A3DFF27F07F320070EF4A /* CommonWebViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */; };
-		4D3A3E0027F07F320070EF4A /* CommonWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3DFD27F07F320070EF4A /* CommonWebViewController.swift */; };
-		4D3A3E0227F080040070EF4A /* CustomWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0127F080040070EF4A /* CustomWebViewController.swift */; };
-		4D3A3E0527F0807B0070EF4A /* DeepLinkTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0427F0807B0070EF4A /* DeepLinkTypes.swift */; };
 		4D3A3E0827F081290070EF4A /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 4D3A3E0727F081290070EF4A /* NVActivityIndicatorView */; };
 		4D3A3E0B27F0813D0070EF4A /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0A27F0813D0070EF4A /* ProgressView.swift */; };
-		4D3A3E0F27F0823E0070EF4A /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */; };
-		4D3A3E1227F082780070EF4A /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1127F082780070EF4A /* UIAlertController+.swift */; };
 		4D3A3E1527F133FC0070EF4A /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A3E1427F133FC0070EF4A /* Toast.swift */; };
 		4D3AFF1428A4AC7200A99CA2 /* sampleScheme.html in Resources */ = {isa = PBXBuildFile; fileRef = 4D3AFF1328A4AC7200A99CA2 /* sampleScheme.html */; };
+		BFFEC12C299B51640020C581 /* JavascriptFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFEC12A299B51640020C581 /* JavascriptFunctions.swift */; };
+		BFFEC12D299B51640020C581 /* CommonWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFEC12B299B51640020C581 /* CommonWebViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,22 +30,11 @@
 		4D3A3DC727F077520070EF4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4D3A3DC927F077520070EF4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D3A3DD027F077740070EF4A /* ios_MKWebviewBridge */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ios_MKWebviewBridge; path = ..; sourceTree = "<group>"; };
-		4D3A3DD627F078290070EF4A /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		4D3A3DD727F078290070EF4A /* Coordinator+FlowType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Coordinator+FlowType.swift"; sourceTree = "<group>"; };
-		4D3A3DD827F078290070EF4A /* BaseCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
-		4D3A3DF027F079DD0070EF4A /* CommonListHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonListHeaderView.swift; sourceTree = "<group>"; };
-		4D3A3DF227F079DD0070EF4A /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		4D3A3DF327F079DD0070EF4A /* BaseViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
-		4D3A3DF927F07F320070EF4A /* CommonWebViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewModel.swift; sourceTree = "<group>"; };
-		4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewCoordinator.swift; sourceTree = "<group>"; };
-		4D3A3DFD27F07F320070EF4A /* CommonWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewController.swift; sourceTree = "<group>"; };
-		4D3A3E0127F080040070EF4A /* CustomWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWebViewController.swift; sourceTree = "<group>"; };
-		4D3A3E0427F0807B0070EF4A /* DeepLinkTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTypes.swift; sourceTree = "<group>"; };
 		4D3A3E0A27F0813D0070EF4A /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
-		4D3A3E1127F082780070EF4A /* UIAlertController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+.swift"; sourceTree = "<group>"; };
 		4D3A3E1427F133FC0070EF4A /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		4D3AFF1328A4AC7200A99CA2 /* sampleScheme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = sampleScheme.html; sourceTree = "<group>"; };
+		BFFEC12A299B51640020C581 /* JavascriptFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JavascriptFunctions.swift; sourceTree = "<group>"; };
+		BFFEC12B299B51640020C581 /* CommonWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonWebViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +75,6 @@
 			children = (
 				4D3A3DD427F0780B0070EF4A /* Application Layer */,
 				4D3A3DE027F078FB0070EF4A /* Presentation Layer */,
-				4D3A3E0C27F0822E0070EF4A /* Core Layer */,
 				4D3A3DDF27F078E30070EF4A /* Resources */,
 			);
 			path = MKWebviewBridgeExample;
@@ -123,19 +100,8 @@
 			children = (
 				4D3A3DBB27F077510070EF4A /* AppDelegate.swift */,
 				4D3A3DBD27F077510070EF4A /* SceneDelegate.swift */,
-				4D3A3DD527F078180070EF4A /* Coordinator */,
 			);
 			path = "Application Layer";
-			sourceTree = "<group>";
-		};
-		4D3A3DD527F078180070EF4A /* Coordinator */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DD627F078290070EF4A /* AppCoordinator.swift */,
-				4D3A3DD827F078290070EF4A /* BaseCoordinator.swift */,
-				4D3A3DD727F078290070EF4A /* Coordinator+FlowType.swift */,
-			);
-			path = Coordinator;
 			sourceTree = "<group>";
 		};
 		4D3A3DDF27F078E30070EF4A /* Resources */ = {
@@ -152,7 +118,7 @@
 		4D3A3DE027F078FB0070EF4A /* Presentation Layer */ = {
 			isa = PBXGroup;
 			children = (
-				4D3A3DF727F07F320070EF4A /* CommonWebScene */,
+				BFFEC129299B51640020C581 /* CommonWebView */,
 				4D3A3DE127F0790B0070EF4A /* Common */,
 			);
 			path = "Presentation Layer";
@@ -163,71 +129,8 @@
 			children = (
 				4D3A3E1327F133F30070EF4A /* Toast */,
 				4D3A3E0927F081300070EF4A /* Progress */,
-				4D3A3DF127F079DD0070EF4A /* Base */,
-				4D3A3DEF27F079DD0070EF4A /* Cells */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		4D3A3DEF27F079DD0070EF4A /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DF027F079DD0070EF4A /* CommonListHeaderView.swift */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
-		};
-		4D3A3DF127F079DD0070EF4A /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DF227F079DD0070EF4A /* BaseViewController.swift */,
-				4D3A3DF327F079DD0070EF4A /* BaseViewModel.swift */,
-				4D3A3E0127F080040070EF4A /* CustomWebViewController.swift */,
-			);
-			path = Base;
-			sourceTree = "<group>";
-		};
-		4D3A3DF727F07F320070EF4A /* CommonWebScene */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3E0327F080700070EF4A /* Models */,
-				4D3A3DF827F07F320070EF4A /* ViewModel */,
-				4D3A3DFA27F07F320070EF4A /* Coordinator */,
-				4D3A3DFC27F07F320070EF4A /* View */,
-			);
-			path = CommonWebScene;
-			sourceTree = "<group>";
-		};
-		4D3A3DF827F07F320070EF4A /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DF927F07F320070EF4A /* CommonWebViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		4D3A3DFA27F07F320070EF4A /* Coordinator */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DFB27F07F320070EF4A /* CommonWebViewCoordinator.swift */,
-			);
-			path = Coordinator;
-			sourceTree = "<group>";
-		};
-		4D3A3DFC27F07F320070EF4A /* View */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3DFD27F07F320070EF4A /* CommonWebViewController.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		4D3A3E0327F080700070EF4A /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3E0427F0807B0070EF4A /* DeepLinkTypes.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		4D3A3E0927F081300070EF4A /* Progress */ = {
@@ -238,29 +141,21 @@
 			path = Progress;
 			sourceTree = "<group>";
 		};
-		4D3A3E0C27F0822E0070EF4A /* Core Layer */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3E0D27F082350070EF4A /* Extensions */,
-			);
-			path = "Core Layer";
-			sourceTree = "<group>";
-		};
-		4D3A3E0D27F082350070EF4A /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				4D3A3E0E27F0823E0070EF4A /* Dictionary+.swift */,
-				4D3A3E1127F082780070EF4A /* UIAlertController+.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		4D3A3E1327F133F30070EF4A /* Toast */ = {
 			isa = PBXGroup;
 			children = (
 				4D3A3E1427F133FC0070EF4A /* Toast.swift */,
 			);
 			path = Toast;
+			sourceTree = "<group>";
+		};
+		BFFEC129299B51640020C581 /* CommonWebView */ = {
+			isa = PBXGroup;
+			children = (
+				BFFEC12A299B51640020C581 /* JavascriptFunctions.swift */,
+				BFFEC12B299B51640020C581 /* CommonWebViewController.swift */,
+			);
+			path = CommonWebView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,6 +168,7 @@
 				4D3A3DB427F077510070EF4A /* Sources */,
 				4D3A3DB527F077510070EF4A /* Frameworks */,
 				4D3A3DB627F077510070EF4A /* Resources */,
+				BFFEC12F299C376A0020C581 /* Lint */,
 			);
 			buildRules = (
 			);
@@ -340,28 +236,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BFFEC12F299C376A0020C581 /* Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Lint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# Default Warning in Lint\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/MKUtils/Resources/SwiftLint/Run\"\n \n# Auto fix all Lint\n# \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/MKUtils/Resources/SwiftLint/RunAuto\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4D3A3DB427F077510070EF4A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D3A3DD927F078290070EF4A /* AppCoordinator.swift in Sources */,
-				4D3A3DF627F079DD0070EF4A /* BaseViewModel.swift in Sources */,
 				4D3A3E1527F133FC0070EF4A /* Toast.swift in Sources */,
-				4D3A3DFE27F07F320070EF4A /* CommonWebViewModel.swift in Sources */,
-				4D3A3DFF27F07F320070EF4A /* CommonWebViewCoordinator.swift in Sources */,
-				4D3A3DDB27F078290070EF4A /* BaseCoordinator.swift in Sources */,
-				4D3A3DDA27F078290070EF4A /* Coordinator+FlowType.swift in Sources */,
 				4D3A3DBC27F077510070EF4A /* AppDelegate.swift in Sources */,
-				4D3A3E0527F0807B0070EF4A /* DeepLinkTypes.swift in Sources */,
-				4D3A3E1227F082780070EF4A /* UIAlertController+.swift in Sources */,
-				4D3A3DF527F079DD0070EF4A /* BaseViewController.swift in Sources */,
-				4D3A3E0227F080040070EF4A /* CustomWebViewController.swift in Sources */,
+				BFFEC12C299B51640020C581 /* JavascriptFunctions.swift in Sources */,
+				BFFEC12D299B51640020C581 /* CommonWebViewController.swift in Sources */,
 				4D3A3DBE27F077510070EF4A /* SceneDelegate.swift in Sources */,
-				4D3A3E0F27F0823E0070EF4A /* Dictionary+.swift in Sources */,
 				4D3A3E0B27F0813D0070EF4A /* ProgressView.swift in Sources */,
-				4D3A3E0027F07F320070EF4A /* CommonWebViewController.swift in Sources */,
-				4D3A3DF427F079DD0070EF4A /* CommonListHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

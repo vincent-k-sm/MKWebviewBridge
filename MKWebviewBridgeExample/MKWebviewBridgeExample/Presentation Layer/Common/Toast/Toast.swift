@@ -2,15 +2,14 @@
 //  Toast.swift
 //
 
-
 import Foundation
+import MKUtils
 import UIKit
-import MKFoundation
 
 public class MKToast: UIView {
     
     deinit {
-        print("\(Self.self) -- deinit")
+        Debug.print("")
     }
     // MARK: - 내부에서 사용되는 변수 및 상수
     
