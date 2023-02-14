@@ -1,114 +1,110 @@
 //
 //  MKWebViewController+WKDelegate.swift
 //
-
+        
 
 import Foundation
 import WebKit
+import SafariServices
 
 extension MKWebViewController: WKNavigationDelegate{
+    // MARK: Open URL For new tab <a href='https://..' target='_blank'> (window.open)
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        
+        guard let url = navigationAction.request.url else { return nil }
+        if navigationAction.targetFrame?.isMainFrame == nil {
+            if UIApplication.shared.canOpenURL(url) {
+                let safariViewController = SFSafariViewController(url: url)
+                safariViewController.modalPresentationStyle = .fullScreen
+                self.present(safariViewController, animated: true, completion: nil)
+            }
+        }
+
+        return nil
+    }
+    
     open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        SystemUtils.shared.print("webViewDidStartLoad", self)
+        MKWebKit.print("webViewDidStartLoad")
     }
     
     open func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-        SystemUtils.shared.print("didCommit", self)
+        MKWebKit.print("didCommit")
     }
     
     open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        SystemUtils.shared.print("탐색 중 오류: \(error)", self)
+        MKWebKit.print("탐색 중 오류: \(error)")
     }
     
     open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        SystemUtils.shared.print("컨텐츠 로드 중 오류: \(error)", self)
+        MKWebKit.print("컨텐츠 로드 중 오류: \(error)")
     }
     
     open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        var urlString = self.loadURLString()?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        var urlString = self.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let localUrl = self.loadLocalFile()?.absoluteString {
             urlString = localUrl
         }
         
-        SystemUtils.shared.print("WebViewDidFinishLoad\n\(String(describing: urlString))", self)
-        self.webView.getCookies(for: urlString, completion: { [weak self] result in
-            guard let self = self else { return }
-            SystemUtils.shared.print(result, self)
+        MKWebKit.print("WebViewDidFinishLoad\n\(String(describing: urlString))")
+        self.webView.getCookies(for: urlString, completion: { result in
+            MKWebKit.print(result)
             
         })
-        
-        SystemUtils.shared.print(self.webView.allheaderFields ?? "", self)
+        MKWebKit.print("Header: \(String(describing: self.webView.allheaderFields))")
     }
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(WKWebView.url) {
             guard let url = self.webView.url else { return }
             if url.absoluteString != self.urlString {
-                SystemUtils.shared.print("url chagned to: \(url.absoluteString)", self)
+                MKWebKit.print("url chagned to: \(url.absoluteString)")
             }
         }
 
         if keyPath == #keyPath(WKWebView.estimatedProgress) {
             // When page load finishes. Should work on each page reload.
             if (self.webView.estimatedProgress == 1) {
-                SystemUtils.shared.print("estimatedProgress: \(self.webView.estimatedProgress)", self)
+                MKWebKit.print("estimatedProgress: \(self.webView.estimatedProgress)")
             }
         }
 
     }
 
     open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        SystemUtils.shared.print(navigationAction.request, self)
-        
-        // Check whether WebView Native is linked
+        MKWebKit.print(navigationAction.request)
         if let url = navigationAction.request.url,
            let urlScheme = url.scheme {
+            /// 허용된 Scheme 이며 앱 내 별도 처리 case
             if self.checkURLSchemeEnable(from: urlScheme) {
-                
-                // Handle Deep link
-                SystemUtils.shared.print("need parse deeplink \(url)", self)
+                MKWebKit.print("Need Parse \(url)")
                 guard let component = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
                 guard let host = component.host else { return }
-
-                var configure = MKWebViewConfiguration()
-                configure.host = host
                 
-                if let queryItems = component.queryItems {
-                    let queryResult = self.queryToDictionary(queryItems)
-                    
-                    do {
-                        let jsonData = try JSONSerialization.data(withJSONObject: queryResult, options: .prettyPrinted)
-                        var result = try JSONDecoder().decode(MKWebViewConfiguration.self, from: jsonData)
-                        SystemUtils.shared.print(result, self)
-                        result.host = host
-                        configure = result
-                    }
-                    catch {
-                        SystemUtils.shared.print(error.localizedDescription, self)
-                    }
-                }
-                
-                self.delegate?.deepLinkEvent(config: configure)
+                let queryItems = component.queryItems
+                let queryResult = self.queryToDictionary(queryItems)
+                self.handleDeeplink(host: host, query: queryResult)
                 decisionHandler(.cancel)
                 return
                 
             }
             else {
-                // handle Likes tel:, mailto ..
-                if self.defaultSchemes.contains(urlScheme) {
+                /// CustomScheme인 경우 처리
+                if self.allowSchemes.contains(urlScheme) {
                     guard let url = navigationAction.request.url else { return }
                     if UIApplication.shared.canOpenURL(url) {
                         UIApplication.shared.open(url, completionHandler: { (success) in
-                            SystemUtils.shared.print("Settings opened: \(success)", self)
+                            MKWebKit.print("Settings opened: \(success)")
                         })
                     }
                     else {
-                        SystemUtils.shared.print("Cannot Open URL Scheme : \(url)", self)
+                        MKWebKit.print("Cannot Open URL Scheme : \(url)")
                     }
+                    decisionHandler(.cancel)
+                    return
                 }
-                
             }
-            
         }
+        
         decisionHandler(.allow)
     }
     
@@ -129,30 +125,22 @@ extension MKWebViewController: WKNavigationDelegate{
 
 extension MKWebViewController: WKUIDelegate {
     open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        SystemUtils.shared.print(message, self)
+        MKWebKit.print(message)
     }
     
     open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        SystemUtils.shared.print(message, self)
+        MKWebKit.print(message)
     }
     
     open func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-        SystemUtils.shared.print(prompt, self)
+        MKWebKit.print(prompt)
     }
     
-    func showAlert(msg: String, actions: [UIAlertAction]) {
-        let alertController = UIAlertController(title: nil, message: msg, preferredStyle: UIAlertController.Style.alert)
-        
-        actions.forEach {
-            alertController.addAction($0)
-        }
-        self.present(alertController, animated: true, completion: nil)
-    }
 }
 
 extension MKWebViewController {
     /// query to dict
-    private func queryToDictionary(_ array: [URLQueryItem]?) -> [String:String?]{
+    private func queryToDictionary(_ array: [URLQueryItem]?) -> [String:String?] {
         guard array != nil else {
             return [:]
         }

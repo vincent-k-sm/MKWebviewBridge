@@ -1,13 +1,14 @@
 //
 //  WebkitManager.swift
 //
-
+        
 
 import Foundation
 import WebKit
 
 public final class WebkitManager {
     public static let shared = WebkitManager()
+    
     var websiteDataStore = WKWebsiteDataStore.default() //
     
     public var configuration: WKWebViewConfiguration {
@@ -41,87 +42,72 @@ public final class WebkitManager {
     /// Pass cookie to wkwebview.
     /// - Parameter completion: returns WKConfiguration.
     public func syncCookies(completion: @escaping (WKWebViewConfiguration) -> Void) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            self.configuration.websiteDataStore = self.websiteDataStore
+        self.configuration.websiteDataStore = self.websiteDataStore
 
-            let dispatchGroup = DispatchGroup()
+        let group = DispatchGroup()
+        let que = DispatchQueue.main
+        que.async(group: group) {
             self.httpCookies.forEach {
-
-                dispatchGroup.enter()
+                group.enter()
                 self.websiteDataStore.httpCookieStore.setCookie($0) {
-                    dispatchGroup.leave()
+                    group.leave()
                 }
             }
-            dispatchGroup.notify(queue: DispatchQueue.main, execute: {
-                completion(self.configuration)
-            })
         }
+        
+        group.notify(queue: que, execute: {
+            completion(self.configuration)
+        })
+        
+        
     }
     
-    public func setHeaders(headers: [String:String], completion: @escaping (Bool) -> Void) {
+    public func setHeaders(headers: [String: String], completion: @escaping (Bool) -> Void) {
         
         if headers.isEmpty {
             completion(true)
         }
         
-        let dispatchGroup = DispatchGroup()
-        DispatchQueue.main.async {
+        let group = DispatchGroup()
+        let que = DispatchQueue.main//(label: "headers", qos: .background)
+        que.async(group: group) {
             headers.forEach { key, value in
-                dispatchGroup.enter()
+                group.enter()
                 self.headers[key] = value
-                dispatchGroup.leave()
+                group.leave()
             }
         }
         
-        dispatchGroup.notify(queue: DispatchQueue.main, execute: {
+        group.notify(queue: que, execute: {
             completion(true)
         })
         
     }
     
     public func setCookies(cookies: [HTTPCookie] = [], completion: @escaping (WKWebViewConfiguration) -> Void) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-
-            self.configuration.websiteDataStore = self.websiteDataStore
-
-            if cookies.isEmpty {
-                completion(self.configuration)
-                return
-            }
-            
-            let dispatchGroup = DispatchGroup()
+        
+        let group = DispatchGroup()
+        let que = DispatchQueue.main
+        que.async(group: group) {
             cookies.forEach {
-                dispatchGroup.enter()
+                group.enter()
                 self.websiteDataStore.httpCookieStore.setCookie($0) {
-                    dispatchGroup.leave()
+                    group.leave()
                 }
-
             }
-            dispatchGroup.notify(queue: DispatchQueue.main, execute: {
-                completion(self.configuration)
-            })
         }
+        
+        group.notify(queue: que, execute: {
+            completion(self.configuration)
+        })
     }
     
     /// Clears all cookie.
     /// - Parameter completion: completion block.
     public func removeCookies(completion: @escaping() -> Void) {
-
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            self.deleteWKcookie {
-                for cookie in self.httpCookies {
-                    SystemUtils.shared.print(cookie.value, self)
-                }
-                
-                self.configuration.processPool = WKProcessPool()
-                completion()
-            }
+        self.deleteWKcookie {
+            self.configuration.processPool = WKProcessPool()
+            completion()
         }
     }
     
@@ -149,15 +135,20 @@ private extension WebkitManager {
     
         self.configuration.websiteDataStore = self.websiteDataStore
 
-        let dispatchGroup = DispatchGroup()
-        httpCookies.forEach {
-            dispatchGroup.enter()
-            self.websiteDataStore.httpCookieStore.delete($0) {
-                dispatchGroup.leave()
+        let group = DispatchGroup()
+        let que = DispatchQueue.main
+        que.async(group: group) {
+            self.httpCookies.forEach {
+                group.enter()
+                self.websiteDataStore.httpCookieStore.delete($0) {
+                    group.leave()
+                }
             }
         }
-        dispatchGroup.notify(queue: DispatchQueue.main, execute: {
+        
+        group.notify(queue: que, execute: {
             completion()
         })
     }
 }
+

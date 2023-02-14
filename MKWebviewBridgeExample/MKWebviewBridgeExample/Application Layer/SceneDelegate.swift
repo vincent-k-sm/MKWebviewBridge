@@ -9,7 +9,6 @@ import MKWebview
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var appCoordinator: AppCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -24,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("Error Handling callStackSymbols: \(exception.callStackSymbols)")
         }
         
-        self.startApplication()
+        self.startApplication(scene)
         self.initLibrary()
     }
 
@@ -62,9 +61,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 // MARK: - Application
 extension SceneDelegate {
-    private func startApplication() {
+    private func startApplication(_ scene: UIScene) {
         // MARK: - Coordinator
-        self.appCoordinator = AppCoordinator(window: self.window!)
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        self.window = UIWindow(windowScene: windowScene)
+        let vc = NewCommonWebViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        self.window?.rootViewController = nav
+        self.window?.makeKeyAndVisible()
 
     }
 }
@@ -72,7 +76,10 @@ extension SceneDelegate {
 // MARK: - Lib
 extension SceneDelegate {
     private func initLibrary() {
-        MKWebview.debugEnabled = true
+        MKWebKit.enableDebug = true
+        WebkitManager.shared.removeCookies(completion: {
+            
+        })
     }
 }
 

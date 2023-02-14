@@ -1,20 +1,20 @@
 //
 //  MKWebViewController.swift
 //
-
+        
 
 import Foundation
 import UIKit
 import WebKit
-import Combine
 
-public protocol MKWebViewControllerDelegate: AnyObject {
-    func deepLinkEvent(config: MKWebViewConfiguration)
-}
+public protocol ScriptInterface: RawRepresentable where RawValue == String { }
+
+public typealias ReplyCallBack = (
+    _ body: Any?,
+    _ handler: @escaping (Any?, String?) -> Void
+) -> Void
 
 open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
-    
-    open weak var delegate: MKWebViewControllerDelegate?
     
     /// For Apply cookies when load
     /// - Parameters :
@@ -22,13 +22,18 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     /*
      override func cookies() -> [HTTPCookie] {
          var cookies: [HTTPCookie] = []
-         if let uuidCookie = HTTPCookie(properties: [.domain: "https://smbh.kr",
-                                                     .path: "/",
-                                                     .name: "CID",
-                                                     .value: "\(UUID().uuidString)",
-                                                     .secure: "TRUE"]) {
+         if let uuidCookie = HTTPCookie(
+             properties: [
+                 .domain: "ko.kr",
+                 .path: "/",
+                 .name: "CID",
+                 .value: "\(UUID().uuidString)",
+                 .secure: false
+             ]
+         ) {
              cookies.append(uuidCookie)
          }
+         
          return cookies
      }
      */
@@ -58,20 +63,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return [:]
     }
     
-    
-    /// For Static URL Load
-    /// - Parameters :
-    /// - Usecase
-    /*
-     override func loadURLString() -> String? {
-         return "https://smbh.kr/mk_bridge/sample"
-     }
-     */
-    open func loadURLString() -> String? {
-        return nil
-    }
-    
-    /// For Static URL Load
+    /// For Static Local File Load
     /// - Parameters :
     /// - Usecase
     /*
@@ -90,12 +82,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     /*
      override func onAddUserScript() -> String? {
          return """
-             Mobile = {
+            CustomScripts = {
                  showToast(s) {
                      window.webkit.messageHandlers.showToast.postMessage(s);
                  },
             }
         """
+     /// It can Called `window.CustomScripts.showToast('msg';)` in JavaScript
      ----
      override func onAddPostMessage() {
          addPostMessageHandler("showToast") { (res) in
@@ -110,63 +103,107 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return nil
     }
     
-    public var defaultSchemes = ["tel", "mailto", "sms", "facetime"]
+    /// Top Content View
+    /// - Returns:
+    ///   - view : Content View for Top Area
+    ///   - Height : Content Height for Top Area
+    open func topContentView() -> (view: UIView, height: CGFloat)? {
+        return nil
+    }
     
-    private(set) var urlString: String = ""
+    /// For Regist Handle Scripts
+    /// - Usecase
+    open func onAddPostMessage() {
+        //
+    }
     
-    // MARK: - Local Properties
-    lazy var statusBarView: UIView = {
-        let v = UIView()
-        v.backgroundColor = .white
-        return v
-    }()
+    open func addPostMessageHandler(_ key: some ScriptInterface, result: @escaping ((Any?) -> Void)) {
+        _callbacks[key.rawValue] = result
+        MKWebKit.print("handler \(key.rawValue) is registered")
+        contentController.add(
+            LeakAvoider(delegate: self, delegateReply: nil),
+            name: key.rawValue
+        )
+    }
+    /// iOS 14 이상 부터 javascript 통신 간 promise를 활용할 수 있습니다
+    /// - Parameters:
+    ///   - key: messageHandler 의 key
+    ///   - handler: ReplyHandler Call back
+    ///   - result: 결과처리
+    ///   - UseCase
+    /*
+     --- javaScript ---
+     var promise = window.webkit.messageHandlers.testWithPromise.postMessage( inputInfo );
+     promise.then(
+         function(result) {
+             console.log(result); // "Stuff worked!"
+             successFunc( result )
+         },
+         function(err) {
+             console.log(err); // Error: "It broke"
+             errorFunc( err )
+         }
+     );
+     --- override func onAddPostMessage() ---
+     if #available(iOS 14.0, *) {
+        let promiseResult: ReplyHandler = ("Return Data", nil)
+        addPostMessageReplyHandler("testWithPromise", handler: promiseResult, result: { result in
+            print("Called")
+        })
+     }
+     */
+    @available(iOS 14.0, *)
+    public func addPostMessageReplyHandler(_ key: some ScriptInterface, result: @escaping ReplyCallBack) {
+//        let v: ReplyCallBack = (handler, result)
+        _replycallbacks[key.rawValue] = result
+        MKWebKit.print("for promise reply handler \(key.rawValue) is registered")
+        
+        self.contentController.addScriptMessageHandler(
+            LeakAvoider(delegate: nil, delegateReply: self),
+            contentWorld: .page,
+            name: key.rawValue
+        )
+    }
     
-    public lazy var navigationView: UIView = {
-        let v = UIView()
-        v.addSubview(leftBarButton)
-        v.addSubview(rightBarButton)
-        v.addSubview(titleLabel)
-        v.backgroundColor = .white
-        return v
-    }()
+    public func reloadWebview() {
+        let configuration = WebkitManager.shared.configuration
+        configuration.userContentController.removeAllUserScripts()
+        if let userScript = onAddUserScript() {
+            MKWebKit.print(userScript)
+            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            contentController.addUserScript(s)
+
+        }
+        
+        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+            guard let self = self else { return }
+            guard let url = self.checkUrlString() else { return }
+            self.webView.load(url: url, header: self.headers())
+        })
+    }
     
-    public lazy var leftBarButton: UIButton = {
-        let v = UIButton(type: .custom)
-        let image = UIImage(named: "icn_arrow_left_gray", in: Bundle.module, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate)
-        v.setImage(image, for: .normal)
-        v.addTarget(self, action: #selector(self.leftBarButtonTapped), for: .touchUpInside)
-        v.isHidden = true
-        v.tintColor = UIColor(hexString: "292F33")
-        return v
-    }()
+    // MARK: "tel", "mailto", "sms", "facetime"
+    ///  https://medium.com/@contact.jmeyers/complete-list-of-ios-url-schemes-for-apple-apps-and-services-always-updated-800c64f450f
+    open var allowSchemes: [String] {
+        return ["tel", "telprompt", "message", "mailto", "facetime", "sms", "shareddocuments", "app-settings"]
+    }
     
-    public lazy var rightBarButton: UIButton = {
-        let v = UIButton(type: .custom)
-        let image = UIImage(named: "icn_cross_gray", in: Bundle.module, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate)
-        v.setImage(image, for: .normal)
-        v.addTarget(self, action: #selector(self.rightBarButtonTapped), for: .touchUpInside)
-        v.tintColor = UIColor(hexString: "292F33")
-        v.isHidden = true
-        return v
-    }()
-    
-    public lazy var titleLabel: UILabel = {
-        let v = UILabel()
-        v.textColor = UIColor(hexString: "292F33")
-        return v
-    }()
-    
-    lazy var bottomSafeAreaView: UIView = {
-        let v = UIView()
-        v.backgroundColor = .white
-        return v
-    }()
-    
-    open var configuration: MKWebViewConfiguration? = nil {
-        willSet {
-            self.updateNavigationBar(config: newValue)
+    private(set) var _urlString: String = "" {
+        didSet {
+            self.reloadWebview()
         }
     }
+    
+    public var urlString: String {
+        get {
+            return self._urlString
+        }
+        set {
+            self._urlString = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
+        }
+    }
+    
+    // MARK: - Local Properties
     
     var _callbacks = [String: ((Any?)->Void)]()
     var _replycallbacks = [String: ReplyCallBack]()
@@ -183,7 +220,6 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         
         v.addObserver(self, forKeyPath: "URL", options: .new, context: nil)
         v.addObserver(self, forKeyPath: "estimatedProgress", options: .new, context: nil)
-                
         /// Set Cookies
         v.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
             guard let self = self else { return }
@@ -191,20 +227,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
             v.load(url: url, header: self.headers())
         })
 
+        v.allowsBackForwardNavigationGestures = true
         return v
     }()
     
-    convenience init(config: MKWebViewConfiguration) {
-        self.init()
-        self.configuration = config
-    }
-    
     open override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupNavigationBar()
-        self.setupStatusbar()
-        self.setupWebView()
-        
+        self.setupUI()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -217,44 +246,12 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
     
+    open func handleDeeplink(host: String, query: [String: String?]) {
+        
+    }
+    
     deinit {
-//        self.webView.removeObserver(self, forKeyPath: "URL")
-//        self.webView.removeObserver(self, forKeyPath: "estimatedProgress")
-        
-//        let ucc = webView.configuration.userContentController
-//        ucc.removeAllUserScripts()
-//        self._callbacks.keys.forEach {
-//            ucc.removeScriptMessageHandler(forName: $0)
-//        }
-    }
-    
-    open func onAddPostMessage() {
-        //
-    }
-    
-    open func addPostMessageHandler(_ key: String, result: @escaping ((Any?) -> Void)) {
-        _callbacks[key] = result
-        contentController.add(LeakAvoider(delegate: self, delegateReply: self), name: key)
-    }
-    
-    
-    public func reloadWebview() {
-        let configuration = WebkitManager.shared.configuration
-        configuration.userContentController.removeAllUserScripts()
-        
-        if let userScript = onAddUserScript() {
-            SystemUtils.shared.print(userScript, self)
-            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            contentController.addUserScript(s)
-
-        }
-        
-        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
-            guard let self = self else { return }
-            guard let url = self.checkUrlString() else { return }
-            self.webView.load(url: url, header: self.headers())
-            
-        })
+        MKWebKit.print("")
     }
 }
 
@@ -262,28 +259,53 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
 extension MKWebViewController {
     
     /*
+     Step 1.
+     enum JavaScripts: String, ScriptInterface {
+         case newAccessToken = "NEW_ACSESS_TOKEN"
+         case setToken = "ACSESS_TOKEN"
+         
+     }
+
+     --------------------------------------------------------------------
+     Step 2.
+     self.evaluateJavascript(script, value: value, result: { response in
+         switch response {
+             case let .success(data):
+                 Debug.print("\(data)")
+                 
+             case let .failure(error):
+                 Debug.print(error.localizedDescription)
+         }
+         
+     })
+     */
+    public func evaluateJavascript(
+        _ function: some ScriptInterface,
+        value: [String: Any],
+        result: EvaluateScriptResult
+    ) {
+        let dict = value
+        if let data = try? JSONSerialization.data(withJSONObject: dict, options:[]) {
+            let value = String(data: data, encoding: .utf8)
+            var json = value!.replacingOccurrences(of: "\"", with: "\\\"")
+            json = json.replacingOccurrences(of: "\'", with: "\\\'")
+            let script = "javascript:\(function.rawValue)('\(json)')"
+            self.evaluateJavascript(script, result: result)
+        }
+        
+    }
+    
+    /*
      let value = "javascript:setToken('NEW_ACSESS_TOKEN');"
      self.evaluateJavascript(value) { (result, _ ) in
          Debug.print(result)
      }
      */
-    public func evaluateJavascript(_ function: String, result: ((Bool, Any?) -> Void)?) {
-        self.webView.evaluateJavaScript("\(function)") { (ret, error) in
-            if let error = error {
-                SystemUtils.shared.print(error, self)
-                if let s = result {
-                    s(false, nil)
-                }
-            }
-            else {
-                if let ret = ret {
-                    SystemUtils.shared.print("\(ret)", self)
-                    if let s = result {
-                        s(true, ret)
-                    }
-                }
-            }
-        }
+    public func evaluateJavascript(
+        _ function: String,
+        result: EvaluateScriptResult
+    ) {
+        self.webView.evaluateJavascript(function, result: result)
     }
 }
 
@@ -292,21 +314,17 @@ extension MKWebViewController {
     /// check Url string from all cases
     private func checkUrlString() -> URL? {
         var result: URL? = nil
-        if let urlString = self.loadURLString()?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-            guard let url = URL(string: urlString) else { return nil }
+        
+        if let url = self.loadLocalFile() {
             result = url
         }
-        else if let url = URL(string: self.urlString) {
-            result = url
+        
+        if !self.urlString.isEmpty {
+            if let url = URL(string: self.urlString) {
+                result = url
+            }
         }
-        else if let url = self.loadLocalFile() {
-            result = url
-        }
-        else if let urlString = self.configuration?.urlString {
-            guard let string = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }
-            guard let url = URL(string: string) else { return nil }
-            result = url
-        }
+                
         return result
     }
     
@@ -318,7 +336,7 @@ extension MKWebViewController {
         /// Set Script
         self.contentController = WKUserContentController()
         if let userScript = onAddUserScript() {
-            SystemUtils.shared.print(userScript, self)
+            MKWebKit.print(userScript)
             let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
             contentController.addUserScript(s)
 
@@ -332,8 +350,45 @@ extension MKWebViewController {
 }
 
 extension MKWebViewController {
-    struct Constants {
-        static let statusbarTag = UUID().uuidString
+    private func setupUI() {
+        self.view.backgroundColor = .clear
+        if let topContentView = self.topContentView() {
+            self.view.addSubview(topContentView.view)
+        }
+        
+        self.view.addSubview(self.webView)
+        self.updateLayout()
+    }
+    
+    private func updateLayout() {
+        let guide = self.view.safeAreaLayoutGuide
+        self.webView.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let topContentView = self.topContentView() {
+            let topView = topContentView.view
+            topView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                topView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 0),
+                topView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
+                topView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0),
+                topView.heightAnchor.constraint(equalToConstant: topContentView.height)
+            ])
+            NSLayoutConstraint.activate([
+                webView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 0),
+                webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
+                webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
+                webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
+            ])
+        }
+        else {
+            NSLayoutConstraint.activate([
+                webView.topAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
+                webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
+                webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
+                webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
+            ])
+        }
+        
+      
     }
 }
-
