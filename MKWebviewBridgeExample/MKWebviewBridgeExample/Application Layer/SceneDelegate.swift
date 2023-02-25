@@ -77,7 +77,7 @@ extension SceneDelegate {
 extension SceneDelegate {
     private func initLibrary() {
         MKWebKit.enableDebug = true
-        WebkitManager.shared.removeCookies(completion: {
+        WebkitManager.shared.clearCookies(completion: {
             
         })
     }
