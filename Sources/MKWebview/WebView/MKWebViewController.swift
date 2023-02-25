@@ -175,7 +175,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
 
         }
         
-        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+        self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] in
             guard let self = self else { return }
             guard let url = self.checkUrlString() else { return }
             self.webView.load(url: url, header: self.headers())
@@ -221,7 +221,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         v.addObserver(self, forKeyPath: "URL", options: .new, context: nil)
         v.addObserver(self, forKeyPath: "estimatedProgress", options: .new, context: nil)
         /// Set Cookies
-        v.setCookies(cookies: self.cookies(), completion: { [weak self] _ in
+        v.setCookies(cookies: self.cookies(), completion: { [weak self] in
             guard let self = self else { return }
             guard let url = self.checkUrlString() else { return }
             v.load(url: url, header: self.headers())

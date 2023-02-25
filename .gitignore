@@ -87,3 +87,4 @@ iOSInjectionProject/
 # Auto Gen Scene
 # ignore Auto Generated Scene Folder 
 GenerateScene
+.DS_Store

@@ -69,10 +69,10 @@ open class MKWebView: WKWebView {
     }
     public func setCookies(
         cookies: [HTTPCookie] = [],
-        completion: @escaping (WKWebViewConfiguration) -> Void
+        completion: @escaping () -> Void
     ) {
-        WebkitManager.shared.setCookies(cookies: cookies, completion: { config in
-            completion(config)
+        WebkitManager.shared.setCookies(cookies: cookies, completion: {
+            completion()
         })
     }
     
