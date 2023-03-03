@@ -110,10 +110,12 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     open func topContentView() -> (view: UIView, height: CGFloat)? {
         return nil
     }
+    private(set) var topAreaView: UIView? = nil
     
     public lazy var safeAreaView: UIView = {
         let v = UIView()
         v.backgroundColor = .white
+        v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
         
@@ -360,7 +362,8 @@ extension MKWebViewController {
     private func setupUI() {
         self.view.backgroundColor = .clear
         if let topContentView = self.topContentView() {
-            self.view.addSubview(topContentView.view)
+            self.topAreaView = topContentView.view
+            self.view.addSubview(self.topAreaView!)
             self.view.addSubview(self.safeAreaView)
             self.safeAreaView.backgroundColor = topContentView.view.backgroundColor
         }
@@ -374,7 +377,7 @@ extension MKWebViewController {
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         
         if let topContentView = self.topContentView() {
-            let topView = topContentView.view
+            let topView = self.topAreaView!
             topView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 topView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 0),
