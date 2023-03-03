@@ -111,6 +111,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return nil
     }
     
+    public lazy var safeAreaView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .white
+        return v
+    }()
+        
+    
     /// For Regist Handle Scripts
     /// - Usecase
     open func onAddPostMessage() {
@@ -354,6 +361,8 @@ extension MKWebViewController {
         self.view.backgroundColor = .clear
         if let topContentView = self.topContentView() {
             self.view.addSubview(topContentView.view)
+            self.view.addSubview(self.safeAreaView)
+            self.safeAreaView.backgroundColor = topContentView.view.backgroundColor
         }
         
         self.view.addSubview(self.webView)
@@ -378,6 +387,12 @@ extension MKWebViewController {
                 webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
                 webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
                 webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
+            ])
+            NSLayoutConstraint.activate([
+                safeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+                safeAreaView.bottomAnchor.constraint(equalTo: topView.topAnchor, constant: 0),
+                safeAreaView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
+                safeAreaView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
             ])
         }
         else {
