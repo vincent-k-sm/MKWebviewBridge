@@ -107,16 +107,10 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     /// - Returns:
     ///   - view : Content View for Top Area
     ///   - Height : Content Height for Top Area
-    open func topContentView() -> (view: UIView, height: CGFloat)? {
+    open func topContentView() -> UIView? {
         return nil
     }
-    
-    public lazy var safeAreaView: UIView = {
-        let v = UIView()
-        v.backgroundColor = .white
-        return v
-    }()
-        
+    private(set) var topAreaView: UIView? = nil
     
     /// For Regist Handle Scripts
     /// - Usecase
@@ -360,9 +354,7 @@ extension MKWebViewController {
     private func setupUI() {
         self.view.backgroundColor = .clear
         if let topContentView = self.topContentView() {
-            self.view.addSubview(topContentView.view)
-            self.view.addSubview(self.safeAreaView)
-            self.safeAreaView.backgroundColor = topContentView.view.backgroundColor
+            self.view.addSubview(topContentView)
         }
         
         self.view.addSubview(self.webView)
@@ -373,34 +365,21 @@ extension MKWebViewController {
         let guide = self.view.safeAreaLayoutGuide
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         
+        NSLayoutConstraint.activate([
+            webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
+            webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
+            webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
+        ])
+        
         if let topContentView = self.topContentView() {
-            let topView = topContentView.view
-            topView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                topView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 0),
-                topView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
-                topView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0),
-                topView.heightAnchor.constraint(equalToConstant: topContentView.height)
+                webView.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0)
             ])
-            NSLayoutConstraint.activate([
-                webView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 0),
-                webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
-                webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
-                webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
-            ])
-            NSLayoutConstraint.activate([
-                safeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-                safeAreaView.bottomAnchor.constraint(equalTo: topView.topAnchor, constant: 0),
-                safeAreaView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
-                safeAreaView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
-            ])
+
         }
         else {
             NSLayoutConstraint.activate([
-                webView.topAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
-                webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
-                webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
-                webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
+                webView.topAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0)
             ])
         }
         
