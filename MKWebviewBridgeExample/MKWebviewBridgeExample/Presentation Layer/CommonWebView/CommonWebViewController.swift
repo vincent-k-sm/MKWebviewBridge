@@ -96,8 +96,8 @@ class NewCommonWebViewController: MKWebViewController {
         return v
     }()
     
-    override func topContentView() -> (view: UIView, height: CGFloat)? {
-        return (topView, 65)
+    override func topContentView() -> UIView? {
+        return topView
     }
     
     override func loadLocalFile() -> URL? {
