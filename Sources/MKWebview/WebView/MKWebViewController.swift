@@ -379,7 +379,7 @@ extension MKWebViewController {
         }
         else {
             NSLayoutConstraint.activate([
-                webView.topAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0)
+                webView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 0)
             ])
         }
         
