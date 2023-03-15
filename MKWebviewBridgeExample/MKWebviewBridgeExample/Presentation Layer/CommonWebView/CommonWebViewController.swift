@@ -1,5 +1,5 @@
 //
-//  NewCommonWebViewController.swift
+//  CommonWebViewController.swift
 //
 
 import MKUtils
@@ -7,9 +7,19 @@ import MKWebview
 import UIKit
 import WebKit
 
-class NewCommonWebViewController: MKWebViewController {
+public struct CommonWebViewConfiguration {
+    public var urlString: String = ""
     
-    private var headerInfos: [String: String] = [
+    public init(urlString: String) {
+        self.urlString = urlString
+    }
+}
+
+open class CommonWebViewController: MKWebViewController {
+    
+    var configure: CommonWebViewConfiguration!
+    
+    private var defaultHeaderInfos: [String: String] = [
         "Content-Type": "application/json",
         "app-device-uuid": UUID().uuidString,
         "app-device-os-version": UIDevice.current.systemVersion,
@@ -18,19 +28,26 @@ class NewCommonWebViewController: MKWebViewController {
         "access-token": "\(UUID().uuidString)",
         "refresh-token": "refresh-token-value"
     ]
-    
-    override func headers() -> [String: String] {
-        return self.headerInfos
+        
+    open func customHeaders() -> [String: String] {
+        return [:]
     }
     
-    override func cookies() -> [HTTPCookie] {
+    open override func headers() -> [String: String] {
+        for (key, value) in self.customHeaders() {
+            self.defaultHeaderInfos[key] = value
+        }
+        return self.defaultHeaderInfos
+    }
+    
+    open override func cookies() -> [HTTPCookie] {
         var cookies: [HTTPCookie] = []
         
         if let uuidCookie = HTTPCookie(
             properties: [
                 .domain: "kakao.com",
                 .path: "/",
-                .name: "CID",
+                .name: "TEST_CID",
                 .value: "\(UUID().uuidString)",
                 .secure: false
             ]
@@ -41,7 +58,7 @@ class NewCommonWebViewController: MKWebViewController {
         return cookies
     }
     
-    override func onAddUserScript() -> String? {
+    open override func onAddUserScript() -> String? {
         return """
             CustomScripts = {
                  showToast(s) {
@@ -51,23 +68,24 @@ class NewCommonWebViewController: MKWebViewController {
         """
     }
     
-    override func onAddPostMessage() {
+    open override func onAddPostMessage() {
         super.onAddPostMessage()
-        
         if #available(iOS 14.0, *) {
-            addPostMessageReplyHandler(JavaScriptsHandlers.testWithPromise, result: { result, handler in
+            addPostMessageReplyHandler(JavaScriptsHandlers.getStorage, result: { result, handler in
                 if let result = result as? String {
                     Debug.print(result)
                 }
-                
-                handler("\(UUID().uuidString)", nil)
+//                let stringValue: String = UserDefaultStore.webviewStorage("").data
+                let stringValue: String = UserDefaults.standard.string(forKey: "webviewStorage") ?? ""
+                handler(stringValue, nil)
                 
             })
         }
         
-        addPostMessageHandler(JavaScriptsHandlers.showToast) { (res) in
-            
+        addPostMessageHandler(JavaScriptsHandlers.setStorage) { (res) in
             if let res = res as? String {
+//                UserDefaultStore<String>.webviewStorage(res).save()
+                UserDefaults.standard.set(res, forKey: "webviewStorage")
                 Debug.print(res)
             }
         }
@@ -93,39 +111,50 @@ class NewCommonWebViewController: MKWebViewController {
             titleLabel.topAnchor.constraint(equalTo: v.topAnchor, constant: 0),
             titleLabel.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0)
         ])
+        v.translatesAutoresizingMaskIntoConstraints = false
+        
         return v
     }()
     
-    override func topContentView() -> UIView? {
-        return topView
+    open override func topContentView() -> UIView? {
+        return self.topView
     }
     
-    override func loadLocalFile() -> URL? {
-        guard let url = Bundle.main.url(forResource: "sampleScheme", withExtension: "html") else { return nil }
+#if DEBUG
+    open override func loadLocalFile() -> URL? {
+        guard let url = Bundle.main.url(forResource: "SampleScheme", withExtension: "html") else { return nil }
         return url
     }
+#endif
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.setupUI()
-    }
+//    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//        self.setupUI()
+//    }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.setupUI()
-
+    public init(config: CommonWebViewConfiguration) {
+//        DKTWebKit.enableDebug = true
+        self.configure = config
+        super.init(nibName: nil, bundle: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        self.setupUI()
+        self.urlString = self.configure.urlString
+        self.setupLayout()
+    }
+    
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    override func handleDeeplink(host: String, query: [String: String?]) {
+    open override func handleDeeplink(host: String, query: [String: String?]) {
         enum SchemeTypes: String {
             case webview = "webview"
             case close = "close-webview"
@@ -137,12 +166,12 @@ class NewCommonWebViewController: MKWebViewController {
         Debug.print(scheme, query)
         switch scheme {
             case .webview:
-                let vc = NewCommonWebViewController()
-                if let url = query["url"] as? String {
-                    vc.urlString = url
-                }
-                self.navigationController?.pushViewController(vc, animated: true)
                 
+                if let url = query["url"] as? String {
+                    let vc = CommonWebViewController(config: .init(urlString: url))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+
             case .close:
                 self.navigationController?.popViewController(animated: true)
                 
@@ -159,38 +188,8 @@ class NewCommonWebViewController: MKWebViewController {
     }
 }
 
-extension NewCommonWebViewController {
-    override func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        super.webView(webView, runJavaScriptAlertPanelWithMessage: message, initiatedByFrame: frame, completionHandler: completionHandler)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            let alert: UIAlertController = .init(
-                title: nil,
-                message: message,
-                preferredStyle: .alert
-            )
-            let confirmAction: UIAlertAction = .init(
-                title: "확인",
-                style: .default
-            ) { _ in
-                completionHandler()
-            }
-            alert.addAction(confirmAction)
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-}
-
-extension NewCommonWebViewController {
-    private func setupUI() {
-        self.view.backgroundColor = .white
-    }
-}
-
-extension NewCommonWebViewController {
-    private func callJavaScript(script: JavaScripts, value: [String: Any]) {
-        
+public extension CommonWebViewController {
+    func callJavaScript(script: JavaScripts, value: [String: Any]) {
         self.evaluateJavascript(script, value: value, result: { response in
             switch response {
                 case let .success(data):
@@ -201,5 +200,88 @@ extension NewCommonWebViewController {
             }
             
         })
+    }
+}
+
+extension CommonWebViewController {
+    private func setupUI() {
+        self.view.backgroundColor = .white
+    }
+    
+    private func setupLayout() {
+        let guide = self.view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            self.topView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0),
+            self.topView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0),
+            self.topView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 0),
+            self.topView.heightAnchor.constraint(equalToConstant: 56)
+        ])
+        
+    }
+}
+
+extension CommonWebViewController {
+    
+    open override func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        super.webView(webView, runJavaScriptAlertPanelWithMessage: message, initiatedByFrame: frame, completionHandler: completionHandler)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.onAlertInfo(message)
+            completionHandler()
+        }
+        
+    }
+    
+    open override func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        super.webView(webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame, completionHandler: completionHandler)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            self.onAlertOkCancel(message) { action in
+                switch action {
+                    case .default:
+                        completionHandler(true)
+                        
+                    case .cancel:
+                        completionHandler(false)
+                        
+                    case .destructive:
+                        completionHandler(true)
+                        
+                    @unknown default:
+                        completionHandler(false)
+                }
+            }
+        }
+        
+    }
+}
+
+extension CommonWebViewController {
+    private func onAlertInfo(_ message: String) {
+        let okAction = UIAlertAction(title: "확인", style: .destructive, handler: { _ in
+            Debug.print("")
+        })
+        
+        let alert: UIAlertController = .init(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(okAction)
+        self.navigationController?.present(alert, animated: true)
+    }
+    
+    private func onAlertOkCancel(_ message: String, action: @escaping ((UIAlertAction.Style) -> Void)) {
+        let okAction = UIAlertAction(title: "확인", style: .destructive, handler: { _ in
+            action(.default)
+        })
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: { _ in
+            action(.cancel)
+        })
+        
+        let alert: UIAlertController = .init(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        self.navigationController?.present(alert, animated: true)
+        
     }
 }

@@ -159,6 +159,29 @@
         getConfig();
 
     };
+    
+    function clearData() {
+        webkit.messageHandlers.setStorage.postMessage('');
+    }
+    
+    function getData() {
+        const post = webkit.messageHandlers.getStorage.postMessage('');
+        post.then(function(e){
+            console.log()
+            alert('result:\n' + e)
+        })
+        
+    }
+    
+    function saveData() {
+        var dictObject = {}
+        dictObject['banana'] = '바나나';
+        dictObject['hong'] = '홍';
+        dictObject['monkey'] = '원숭이';
+        const json = JSON.stringify({dictObject});
+        webkit.messageHandlers.setStorage.postMessage(json);
+    }
+    
 
 </script>
 <style>
@@ -238,6 +261,32 @@
                     </div>
                 </div>
 
+            </div>
+            <!-- Script 관련 -->
+            <div id="javaScript">
+                <div class="ui-body ui-body-a ui-corner-all">
+                    <h3>Script Event</h3>
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="clearData();">Clear Data in Native</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="getData();">Get Data From Native</button>
+                            </div>
+                        </div>
+                        <div class="ui-block-b">
+                            <div class="button-wrap">
+                                <button class="ui-shadow ui-btn ui-corner-all" onclick="saveData();">Save Data To Native</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!--        Scheme 관련 -->
             <div id="scheme">
