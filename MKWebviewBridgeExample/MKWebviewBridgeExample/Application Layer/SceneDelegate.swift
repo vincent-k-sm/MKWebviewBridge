@@ -65,7 +65,7 @@ extension SceneDelegate {
         // MARK: - Coordinator
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
-        let vc = NewCommonWebViewController()
+        let vc = CommonWebViewController(config: .init(urlString: ""))
         let nav = UINavigationController(rootViewController: vc)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
