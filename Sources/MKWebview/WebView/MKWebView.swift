@@ -24,9 +24,13 @@ open class MKWebView: WKWebView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    open func setupUserAgent() -> String {
+        return ""
+    }
+    
     
     open func load(url: URL, header: [String: String]) {
-        self.setupUserAgent()
+        self.addUserAgent(value: self.setupUserAgent())
         
         WebkitManager.shared.setHeaders(headers: header, completion: { finish in
             MKWebKit.print("Webview SetHeaders: \(finish.description)")
@@ -52,7 +56,7 @@ open class MKWebView: WKWebView {
         
     }
     
-    private func setupUserAgent() {
+    private func addUserAgent(value: String) {
         self.evaluateJavascript(Constants.userAgentKey, result: { result in
             var agent = ""
             switch result {
@@ -62,11 +66,12 @@ open class MKWebView: WKWebView {
                 case let .failure(error):
                     MKWebKit.print("empty customUserAgent", error.localizedDescription)
             }
-            
-            agent += " NATIVE_iOS"
+
+            agent += value
             self.customUserAgent = agent
         })
     }
+    
     public func setCookies(
         cookies: [HTTPCookie] = [],
         completion: @escaping () -> Void
