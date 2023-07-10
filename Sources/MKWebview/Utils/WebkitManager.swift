@@ -14,7 +14,7 @@ public final class WebkitManager {
         configuration.preferences = defaultPreferences
         configuration.processPool = defaultProcessPool
         configuration.websiteDataStore = WKWebsiteDataStore.default()
-//        configuration.userContentController = defaultUserContentController
+        //        configuration.userContentController = defaultUserContentController
         return configuration
     }
     
@@ -27,16 +27,16 @@ public final class WebkitManager {
     
     var defaultProcessPool: WKProcessPool = WKProcessPool()
     
-//    var defaultUserContentController: WKUserContentController {
-//        return WKUserContentController()
-//    }
+    //    var defaultUserContentController: WKUserContentController {
+    //        return WKUserContentController()
+    //    }
     
     public var headers: [String: String] = [:]
     
     /// Cookies from http cookie store.
-//    public var httpCookies: [HTTPCookie] {
-//        return HTTPCookieStorage.shared.cookies ?? [HTTPCookie]()
-//    }
+    //    public var httpCookies: [HTTPCookie] {
+    //        return HTTPCookieStorage.shared.cookies ?? [HTTPCookie]()
+    //    }
     
     public func setHeaders(headers: [String: String], completion: @escaping (Bool) -> Void) {
         
@@ -60,7 +60,7 @@ public final class WebkitManager {
 
 // MARK: - Manage Cookie
 public extension WebkitManager {
-
+    
     func setCookies(cookies: [HTTPCookie] = [], completion: @escaping () -> Void) {
         if cookies.isEmpty {
             completion()
@@ -146,7 +146,7 @@ public extension WebkitManager {
             })
         })
     }
-    
+   
     func getCookies(for domain: String? = nil, completion: @escaping ([String : Any])->())  {
         var cookieDict = [String : AnyObject]()
         let dataStore = self.configuration.websiteDataStore
@@ -163,5 +163,43 @@ public extension WebkitManager {
             }
             completion(cookieDict)
         }
+    }
+}
+
+/// MARK: Clearable
+public extension WebkitManager {
+    func clearDatas(completion: @escaping () -> Void) {
+        let dataStore = WKWebsiteDataStore.default()
+        let websiteDataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
+        dataStore.fetchDataRecords(ofTypes: websiteDataTypes, completionHandler: { types in
+            var storedDataCount: Int = types.count
+            for type in types {
+                dataStore.removeData(ofTypes: websiteDataTypes, for: [type], completionHandler: {
+                    storedDataCount -= 1
+                    if storedDataCount == 0 {
+                        completion()
+                    }
+                })
+            }
+        })
+    }
+    
+    func clearCache() {
+        URLCache.shared.removeAllCachedResponses()
+    }
+    
+    func clearAllData(completion: @escaping () -> Void) {
+        self.clearCookies(completion: { [weak self] in
+            guard let self = self else { return }
+            
+            self.clearDatas(completion: { [weak self] in
+                guard let self = self else { return }
+                
+                self.clearCache()
+                completion()
+            })
+        })
+        
+        
     }
 }

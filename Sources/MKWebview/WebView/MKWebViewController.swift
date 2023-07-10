@@ -110,7 +110,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     open func topContentView() -> UIView? {
         return nil
     }
-    private(set) var topAreaView: UIView? = nil
+    
+    /// Bottom Content View
+    /// - Returns:
+    ///   - view : Content View for Top Area
+    open func bottomContentView() -> UIView? {
+        return nil
+    }
     
     /// For Regist Handle Scripts
     /// - Usecase
@@ -200,7 +206,9 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
             return self._urlString
         }
         set {
-            self._urlString = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
+            let encodedValue: String = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
+            let expectURLString: String = encodedValue.replacingOccurrences(of: "%25", with: "%")
+            self._urlString = expectURLString
         }
     }
     
@@ -219,8 +227,6 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         v.navigationDelegate = self
         v.uiDelegate = self
         
-        v.addObserver(self, forKeyPath: "URL", options: .new, context: nil)
-        v.addObserver(self, forKeyPath: "estimatedProgress", options: .new, context: nil)
         /// Set Cookies
         v.setCookies(cookies: self.cookies(), completion: { [weak self] in
             guard let self = self else { return }
@@ -232,6 +238,9 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return v
     }()
     
+    private var progressObserver: NSKeyValueObservation?
+    private var urlObserver: NSKeyValueObservation?
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
@@ -240,11 +249,13 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.startObserveWebview()
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.stopObserveWebview()
     }
     
     open func handleDeeplink(host: String, query: [String: String?]) {
@@ -296,6 +307,16 @@ extension MKWebViewController {
         
     }
     
+    public func evaluateJavascript(
+        _ function: some ScriptInterface,
+        value: String,
+        result: EvaluateScriptResult
+    ) {
+        let script = "javascript:\(function.rawValue)('\(value)')"
+        self.evaluateJavascript(script, result: result)
+        
+    }
+    
     /*
      let value = "javascript:setToken('NEW_ACSESS_TOKEN');"
      self.evaluateJavascript(value) { (result, _ ) in
@@ -336,10 +357,14 @@ extension MKWebViewController {
 
         /// Set Script
         self.contentController = WKUserContentController()
-        if let userScript = onAddUserScript() {
+        if let userScript = self.onAddUserScript() {
             MKWebKit.print(userScript)
-            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            contentController.addUserScript(s)
+            let script = WKUserScript(
+                source: userScript,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+            contentController.addUserScript(script)
 
         }
         onAddPostMessage()
@@ -366,7 +391,6 @@ extension MKWebViewController {
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
             webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
             webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0)
         ])
@@ -375,7 +399,7 @@ extension MKWebViewController {
             NSLayoutConstraint.activate([
                 webView.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0)
             ])
-
+            
         }
         else {
             NSLayoutConstraint.activate([
@@ -383,6 +407,44 @@ extension MKWebViewController {
             ])
         }
         
+        if let bottomContentView = self.bottomContentView() {
+            NSLayoutConstraint.activate([
+                webView.bottomAnchor.constraint(equalTo: bottomContentView.topAnchor, constant: 0)
+            ])
+            
+        }
+        else {
+            NSLayoutConstraint.activate([
+                webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0)
+            ])
+        }
       
+    }
+}
+
+// MARK: Observe
+extension MKWebViewController {
+    private func startObserveWebview() {
+        self.urlObserver = self.webView.observe(\.url, options: .new, changeHandler: { [weak self] (v, _) in
+            MKWebKit.print(v.url?.absoluteString ?? "")
+            guard let self = self else { return }
+            if let url: URL = v.url {
+                self.webView(self.webView, didChanged: url)
+            }
+        })
+        
+        
+        self.progressObserver = self.webView.observe(\.estimatedProgress, options: .new, changeHandler: { [weak self] (_, change) in
+            guard let self = self else { return }
+            if let value = change.newValue {
+                self.webView(self.webView, estimatedProgress: value)
+            }
+            
+        })
+    }
+    
+    private func stopObserveWebview() {
+        self.urlObserver = nil
+        self.progressObserver = nil
     }
 }
