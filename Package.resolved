@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "mkutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vincent-k-sm/MKUtils",
+      "state" : {
+        "revision" : "fa0fd01cb6b01cfed71a4dc571e57395ee6a4b93",
+        "version" : "1.2.5"
+      }
+    }
+  ],
+  "version" : 2
+}
