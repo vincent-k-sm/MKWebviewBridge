@@ -7,7 +7,7 @@ import Foundation
 import WebKit
 import SafariServices
 
-extension MKWebViewController: WKNavigationDelegate{
+extension MKWebViewController: WKNavigationDelegate {
     // MARK: Open URL For new tab <a href='https://..' target='_blank'> (window.open)
     open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         
@@ -52,8 +52,17 @@ extension MKWebViewController: WKNavigationDelegate{
         })
         MKWebKit.print("Header: \(String(describing: self.webView.allheaderFields))")
     }
+
+    @objc open func webView(_ webView: WKWebView, didChanged url: URL) {
+        MKWebKit.print("url chagned to: \(url.absoluteString)")
+    }
     
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    @objc open func webView(_ webView: WKWebView, estimatedProgress to: Double) {
+        MKWebKit.print("estimatedProgress: \(to)")
+    }
+    
+    @available(*, deprecated, message: "Block Based KVO Violation / Prefer the new block based KVO API with keypaths when using Swift 3.2 or later")
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(WKWebView.url) {
             guard let url = self.webView.url else { return }
             if url.absoluteString != self.urlString {
