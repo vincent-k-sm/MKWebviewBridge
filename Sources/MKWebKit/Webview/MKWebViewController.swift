@@ -201,7 +201,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    public var urlString: String {
+    open var urlString: String {
         return self._urlString
     }
     
