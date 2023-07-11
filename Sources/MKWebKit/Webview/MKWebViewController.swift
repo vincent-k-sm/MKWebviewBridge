@@ -202,13 +202,28 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     public var urlString: String {
-        get {
-            return self._urlString
-        }
-        set {
-            let encodedValue: String = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
+        return self._urlString
+    }
+    
+//    public var urlString: String {
+//        get {
+//            return self._urlString
+//        }
+//        set {
+//            let encodedValue: String = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
+//            let expectURLString: String = encodedValue.replacingOccurrences(of: "%25", with: "%")
+//            self._urlString = expectURLString
+//        }
+//    }
+    
+    public func setupURL(urlString: String, withEncoding: Bool) {
+        if withEncoding {
+            let encodedValue: String = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? urlString
             let expectURLString: String = encodedValue.replacingOccurrences(of: "%25", with: "%")
             self._urlString = expectURLString
+        }
+        else {
+            self._urlString = urlString
         }
     }
     
