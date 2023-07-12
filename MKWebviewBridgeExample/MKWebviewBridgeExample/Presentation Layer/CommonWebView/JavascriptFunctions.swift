@@ -3,7 +3,7 @@
 //
         
 import Foundation
-import MKWebview
+import MKWebKit
 
 // MARK: - Outbound
 public enum JavaScripts: String, CaseIterable, ScriptInterface {

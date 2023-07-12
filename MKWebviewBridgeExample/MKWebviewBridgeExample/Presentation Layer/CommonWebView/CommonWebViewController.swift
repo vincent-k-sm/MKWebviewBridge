@@ -3,7 +3,7 @@
 //
 
 import MKUtils
-import MKWebview
+import MKWebKit
 import UIKit
 import WebKit
 
@@ -145,7 +145,7 @@ open class CommonWebViewController: MKWebViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.urlString = self.configure.urlString
+        self.setupURL(urlString: self.configure.urlString, withEncoding: true)
         self.setupLayout()
     }
     

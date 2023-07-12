@@ -178,7 +178,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         if let userScript = onAddUserScript() {
             MKWebKit.print(userScript)
             let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            contentController.addUserScript(s)
+            self.contentController.addUserScript(s)
 
         }
         
@@ -205,19 +205,9 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
         return self._urlString
     }
     
-//    public var urlString: String {
-//        get {
-//            return self._urlString
-//        }
-//        set {
-//            let encodedValue: String = newValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? newValue
-//            let expectURLString: String = encodedValue.replacingOccurrences(of: "%25", with: "%")
-//            self._urlString = expectURLString
-//        }
-//    }
-    
     public func setupURL(urlString: String, withEncoding: Bool) {
         if withEncoding {
+            // % 엔코딩 된 문자열이 넘어오는 경우 다시 한 번 인코딩 될 수 있음
             let encodedValue: String = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? urlString
             let expectURLString: String = encodedValue.replacingOccurrences(of: "%25", with: "%")
             self._urlString = expectURLString
