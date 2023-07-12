@@ -55,8 +55,7 @@ open class MKWebView: WKWebView {
         
     }
     
-    public func addUserAgent(value: String, completion: @escaping () -> Void
-    ) {
+    public func addUserAgent(value: String, completion: @escaping () -> Void) {
         self.evaluateJavascript(Constants.userAgentKey, result: { result in
             var agent = ""
             switch result {
