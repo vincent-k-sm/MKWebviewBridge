@@ -137,7 +137,7 @@ open class CommonWebViewController: MKWebViewController {
     }
     
     public init(config: CommonWebViewConfiguration) {
-//        DKTWebKit.enableDebug = true
+//        MKWebKit.enableDebug = true
         self.configure = config
         super.init(nibName: nil, bundle: nil)
     }
