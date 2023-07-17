@@ -127,7 +127,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     open func addPostMessageHandler(_ key: some ScriptInterface, result: @escaping ((Any?) -> Void)) {
         _callbacks[key.rawValue] = result
         MKWebKit.print("handler \(key.rawValue) is registered")
-        contentController.add(
+        self.contentController.add(
             LeakAvoider(delegate: self, delegateReply: nil),
             name: key.rawValue
         )
@@ -377,9 +377,8 @@ extension MKWebViewController {
             configuration.userContentController.addUserScript(script)
 
         }
-        self.onAddPostMessage()
         self.contentController = configuration.userContentController
-
+        self.onAddPostMessage()
         return configuration
     }
     
