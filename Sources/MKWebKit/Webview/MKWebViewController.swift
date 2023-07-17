@@ -127,7 +127,7 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     open func addPostMessageHandler(_ key: some ScriptInterface, result: @escaping ((Any?) -> Void)) {
         _callbacks[key.rawValue] = result
         MKWebKit.print("handler \(key.rawValue) is registered")
-        contentController.add(
+        self.contentController.add(
             LeakAvoider(delegate: self, delegateReply: nil),
             name: key.rawValue
         )
@@ -175,13 +175,18 @@ open class MKWebViewController: UIViewController, UIGestureRecognizerDelegate {
     public func reloadWebview() {
         let configuration = WebkitManager.shared.configuration
         configuration.userContentController.removeAllUserScripts()
-        if let userScript = onAddUserScript() {
+        
+        if let userScript = self.onAddUserScript() {
             MKWebKit.print(userScript)
-            let s = WKUserScript(source: userScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            self.contentController.addUserScript(s)
-
+            let s = WKUserScript(
+                source: userScript,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+            configuration.userContentController.addUserScript(s)
         }
         
+        self.contentController = configuration.userContentController
         self.webView.setCookies(cookies: self.cookies(), completion: { [weak self] in
             guard let self = self else { return }
             guard let url = self.checkUrlString() else { return }
@@ -355,13 +360,13 @@ extension MKWebViewController {
         return result
     }
     
-    /// Genrate WKWebViewConfiguration
+    /// Generate WKWebViewConfiguration
     private func makeConfiguration() -> WKWebViewConfiguration {
         
         let configuration = WebkitManager.shared.configuration
-
         /// Set Script
-        self.contentController = WKUserContentController()
+        configuration.userContentController = WKUserContentController()
+        
         if let userScript = self.onAddUserScript() {
             MKWebKit.print(userScript)
             let script = WKUserScript(
@@ -369,12 +374,11 @@ extension MKWebViewController {
                 injectionTime: .atDocumentEnd,
                 forMainFrameOnly: true
             )
-            contentController.addUserScript(script)
+            configuration.userContentController.addUserScript(script)
 
         }
-        onAddPostMessage()
-        
-        configuration.userContentController = contentController
+        self.contentController = configuration.userContentController
+        self.onAddPostMessage()
         return configuration
     }
     
