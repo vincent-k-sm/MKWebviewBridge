@@ -8,10 +8,14 @@ import WebKit
 
 public final class WebkitManager {
     public static let shared = WebkitManager()
+    let javascriptEnabled: Bool = false
     
     public var configuration: WKWebViewConfiguration {
         let configuration = WKWebViewConfiguration()
         configuration.preferences = defaultPreferences
+        if #available(iOS 14.0, *) {
+            configuration.defaultWebpagePreferences.allowsContentJavaScript = javascriptEnabled
+        }
         configuration.processPool = defaultProcessPool
         configuration.websiteDataStore = WKWebsiteDataStore.default()
         //        configuration.userContentController = defaultUserContentController
@@ -20,7 +24,7 @@ public final class WebkitManager {
     
     var defaultPreferences: WKPreferences {
         let preferences = WKPreferences()
-        preferences.javaScriptEnabled = true
+        preferences.javaScriptEnabled = javascriptEnabled
         preferences.javaScriptCanOpenWindowsAutomatically = false
         return preferences
     }
@@ -173,12 +177,17 @@ public extension WebkitManager {
         let websiteDataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
         dataStore.fetchDataRecords(ofTypes: websiteDataTypes, completionHandler: { types in
             var storedDataCount: Int = types.count
-            for type in types {
-                dataStore.removeData(ofTypes: websiteDataTypes, for: [type], completionHandler: {
-                    storedDataCount -= 1
-                    if storedDataCount == 0 {
-                        completion()
-                    }
+            if storedDataCount == 0 {
+                completion()
+            }
+            else {
+                types.forEach({ type in
+                    dataStore.removeData(ofTypes: websiteDataTypes, for: [type], completionHandler: {
+                        storedDataCount -= 1
+                        if storedDataCount == 0 {
+                            completion()
+                        }
+                    })
                 })
             }
         })
