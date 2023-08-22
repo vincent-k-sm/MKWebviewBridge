@@ -177,12 +177,17 @@ public extension WebkitManager {
         let websiteDataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
         dataStore.fetchDataRecords(ofTypes: websiteDataTypes, completionHandler: { types in
             var storedDataCount: Int = types.count
-            for type in types {
-                dataStore.removeData(ofTypes: websiteDataTypes, for: [type], completionHandler: {
-                    storedDataCount -= 1
-                    if storedDataCount == 0 {
-                        completion()
-                    }
+            if storedDataCount == 0 {
+                completion()
+            }
+            else {
+                types.forEach({ type in
+                    dataStore.removeData(ofTypes: websiteDataTypes, for: [type], completionHandler: {
+                        storedDataCount -= 1
+                        if storedDataCount == 0 {
+                            completion()
+                        }
+                    })
                 })
             }
         })
