@@ -8,7 +8,7 @@ import WebKit
 
 public final class WebkitManager {
     public static let shared = WebkitManager()
-    let javascriptEnabled: Bool = false
+    public var javascriptEnabled: Bool = true
     
     public var configuration: WKWebViewConfiguration {
         let configuration = WKWebViewConfiguration()
